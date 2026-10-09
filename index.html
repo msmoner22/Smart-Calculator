@@ -1,0 +1,583 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Smart Super Calculator</title>
+<style>
+:root {
+  --bg:#f3f6fb;--card:#fff;--text:#172033;
+  --muted:#68768b;--border:#dfe6f0;--primary:#3858df;
+}
+body.dark {
+  --bg:#101827;--card:#192538;--text:#edf2ff;
+  --muted:#a5b1c5;--border:#304056;--primary:#8297ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font:16px system-ui,Arial,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--border);
+padding:14px 18px;display:flex;justify-content:space-between;
+align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+h1{font-size:20px;margin:0}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1100px;margin:auto;padding:16px}
+.hero{background:linear-gradient(120deg,#263fb7,#5878f5);
+color:white;border-radius:18px;padding:20px;margin-bottom:16px}
+.hero h2{margin:0 0 8px}
+#clock{font-size:13px}
+.layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:16px}
+nav,.card{background:var(--card);border:1px solid var(--border);
+border-radius:15px;padding:13px}
+nav{height:max-content;position:sticky;top:85px}
+nav button{display:block;width:100%;text-align:left;padding:11px;
+margin:3px 0;border:0;border-radius:9px;background:transparent;color:var(--text)}
+nav button.active{background:var(--bg);color:var(--primary);font-weight:700}
+.card{margin-bottom:15px}
+h3{margin:0 0 14px}
+.page-title{margin:0 0 5px}
+.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+input,select{width:100%;padding:11px;border:1px solid var(--border);
+border-radius:9px;background:var(--bg);color:var(--text)}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}
+.btn{padding:10px 13px;border:0;border-radius:9px;background:var(--primary);
+color:white;margin:5px 3px 5px 0}
+.btn.secondary{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.display{background:var(--bg);border:1px solid var(--border);
+padding:12px;border-radius:12px;margin-bottom:12px}
+#expression{text-align:right;font-size:22px}
+#result{text-align:right;font-size:27px;color:var(--primary);font-weight:700;
+overflow-wrap:anywhere;min-height:38px}
+.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.key{padding:13px 4px;border:1px solid var(--border);border-radius:9px;
+background:var(--bg);color:var(--text)}
+.key.op{color:var(--primary)}
+.key.eq{background:var(--primary);color:white}
+.hidden{display:none!important}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--border)}
+.table-wrap{overflow-x:auto}
+.notice{padding:12px;border:1px solid var(--border);border-radius:10px;
+color:var(--muted);font-size:13px;margin-top:12px}
+@media(max-width:700px){
+.layout{grid-template-columns:1fr}
+nav{position:static;display:flex;overflow-x:auto;gap:3px}
+nav button{white-space:nowrap;width:auto;flex-shrink:0}
+.grid{grid-template-columns:1fr}
+.app{padding:10px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>∑ Smart Super Calculator</h1>
+  <div class="muted">Calculate smarter. Manage better.</div></div>
+  <button class="btn secondary" id="themeButton">☾ Theme</button>
+</header>
+
+<div class="app">
+  <section class="hero">
+    <h2 id="welcome">Your smart workspace</h2>
+    <div>Calculator • Finance • Records</div>
+    <div id="clock"></div>
+  </section>
+
+  <div class="layout">
+    <nav id="navigation">
+      <button class="active" data-page="home">⌂ Home</button>
+      <button data-page="calculator">🧮 Calculator</button>
+      <button data-page="finance">🏦 Finance & EMI</button>
+      <button data-page="debts">📒 Debt records</button>
+      <button data-page="history">◷ History</button>
+      <button data-page="reminders">🔔 Reminders</button>
+      <button data-page="settings">⚙ Settings</button>
+      <div id="extensionNavigation"></div>
+    </nav>
+
+    <main id="mainContent">
+      <section class="page" id="page-home">
+        <h2 class="page-title">Dashboard</h2>
+        <p class="muted">Your financial workspace at a glance.</p>
+        <div class="grid">
+          <div class="card">Saved calculations<h2 id="countHistory">0</h2></div>
+          <div class="card">Open debt records<h2 id="countDebts">0</h2></div>
+          <div class="card">Reminders<h2 id="countReminders">0</h2></div>
+          <div class="card">App version<h2>1.0</h2></div>
+        </div>
+        <div class="card">
+          <h3>Quick actions</h3>
+          <button class="btn" data-go="calculator">Open Calculator</button>
+          <button class="btn" data-go="finance">Calculate EMI</button>
+          <button class="btn" data-go="debts">Add a debt record</button>
+        </div>
+        <div class="notice">This starter version stores records in this browser on this device. It does not sync automatically to other devices.</div>
+      </section>
+
+      <section class="page hidden" id="page-calculator">
+        <h2 class="page-title">Smart Calculator</h2>
+        <p class="muted">Arithmetic and scientific operations.</p>
+        <div class="card">
+          <div class="display">
+            <input id="expression" aria-label="Expression" placeholder="Example: (25+5)*2">
+            <div id="result" aria-live="polite">0</div>
+          </div>
+          <div class="keys" id="keypad">
+            <button class="key op" data-key="(">(</button>
+            <button class="key op" data-key=")">)</button>
+            <button class="key op" data-action="clear">C</button>
+            <button class="key op" data-action="back">⌫</button>
+            <button class="key" data-key="7">7</button>
+            <button class="key" data-key="8">8</button>
+            <button class="key" data-key="9">9</button>
+            <button class="key op" data-key="/">÷</button>
+            <button class="key" data-key="4">4</button>
+            <button class="key" data-key="5">5</button>
+            <button class="key" data-key="6">6</button>
+            <button class="key op" data-key="*">×</button>
+            <button class="key" data-key="1">1</button>
+            <button class="key" data-key="2">2</button>
+            <button class="key" data-key="3">3</button>
+            <button class="key op" data-key="-">−</button>
+            <button class="key" data-key="0">0</button>
+            <button class="key" data-key=".">.</button>
+            <button class="key op" data-key="%">%</button>
+            <button class="key op" data-key="+">+</button>
+            <button class="key op" data-action="sqrt">√</button>
+            <button class="key op" data-action="square">x²</button>
+            <button class="key op" data-action="sin">sin</button>
+            <button class="key op" data-action="cos">cos</button>
+            <button class="key op" data-action="tan">tan</button>
+            <button class="key op" data-action="log">log</button>
+            <button class="key op" data-action="ln">ln</button>
+            <button class="key op" data-action="pi">π</button>
+            <button class="key eq" data-action="equals">=</button>
+          </div>
+          <p class="muted">Trigonometric functions use degrees.</p>
+          <button class="btn" id="saveCalc">Save calculation</button>
+          <button class="btn secondary" id="copyResult">Copy result</button>
+          <div id="calcMessage" class="muted"></div>
+        </div>
+      </section>
+
+      <section class="page hidden" id="page-finance">
+        <h2 class="page-title">Finance & EMI</h2>
+        <div class="card">
+          <h3>Loan repayment estimate</h3>
+          <label for="principal">Loan amount</label><input id="principal" type="number" min="0" value="100000">
+          <label for="rate">Annual interest rate (%)</label><input id="rate" type="number" min="0" step="any" value="10">
+          <label for="years">Duration in years</label><input id="years" type="number" min="0.01" step="any" value="3">
+          <button class="btn" id="calculateEMI">Calculate EMI</button>
+          <div id="emiResult" class="notice hidden"></div>
+        </div>
+        <div class="card">
+          <h3>Simple & compound interest</h3>
+          <label for="savingsPrincipal">Starting amount</label><input id="savingsPrincipal" type="number" min="0" value="10000">
+          <label for="savingsRate">Annual rate (%)</label><input id="savingsRate" type="number" min="0" step="any" value="8">
+          <label for="savingsYears">Years</label><input id="savingsYears" type="number" min="0" step="any" value="5">
+          <button class="btn" id="calculateSavings">Calculate interest</button>
+          <div id="savingsResult" class="notice hidden"></div>
+        </div>
+        <p class="muted">Estimates only. Actual bank terms, taxes and fees may differ.</p>
+      </section>
+
+      <section class="page hidden" id="page-debts">
+        <h2 class="page-title">Debt records</h2>
+        <div class="card">
+          <h3>Add a record</h3>
+          <form id="debtForm">
+            <label for="person">Person or company</label><input id="person" required maxlength="100">
+            <label for="debtType">Type</label>
+            <select id="debtType"><option value="receivable">They owe me</option><option value="payable">I owe them</option></select>
+            <label for="amount">Amount</label><input id="amount" type="number" min="0.01" step="any" required>
+            <label for="due">Due date</label><input id="due" type="date" required>
+            <label for="note">Notes</label><input id="note" maxlength="250">
+            <button class="btn" type="submit">Save record</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Saved records</h3>
+          <input id="debtSearch" placeholder="Search records">
+          <div class="table-wrap" id="debtTable"></div>
+        </div>
+      </section>
+
+      <section class="page hidden" id="page-history">
+        <h2 class="page-title">Calculation history</h2>
+        <div class="card">
+          <input id="historySearch" placeholder="Search history">
+          <button class="btn secondary" id="exportHistory">Export CSV</button>
+          <button class="btn secondary" id="clearHistory">Clear history</button>
+          <div class="table-wrap" id="historyTable"></div>
+        </div>
+      </section>
+
+      <section class="page hidden" id="page-reminders">
+        <h2 class="page-title">Reminders</h2>
+        <div class="card">
+          <form id="reminderForm">
+            <label for="reminderTitle">Reminder</label><input id="reminderTitle" required maxlength="120">
+            <label for="reminderDate">Date and time</label><input id="reminderDate" type="datetime-local" required>
+            <button class="btn" type="submit">Save reminder</button>
+          </form>
+          <button class="btn secondary" id="notificationPermission">Enable browser notifications</button>
+          <p class="muted">Alerts while the app is closed are not guaranteed in this prototype.</p>
+          <div id="reminderList"></div>
+        </div>
+      </section>
+
+      <section class="page hidden" id="page-settings">
+        <h2 class="page-title">Settings</h2>
+        <div class="card">
+          <h3>Appearance</h3>
+          <label for="theme">Theme</label>
+          <select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="auto">Automatic</option></select>
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="bn">বাংলা</option>
+            <option value="ar">العربية</option>
+            <option value="ur">اردو</option>
+            <option value="hi">हिन्दी</option>
+          </select>
+          <button class="btn" id="saveSettings">Save settings</button>
+        </div>
+        <div class="card">
+          <h3>Backup and restore</h3>
+          <button class="btn" id="backup">Export JSON backup</button>
+          <button class="btn secondary" id="importButton">Import JSON backup</button>
+          <input id="importFile" type="file" accept="application/json,.json" class="hidden">
+          <p class="muted">Backups may contain private financial records. Keep them secure.</p>
+        </div>
+        <div class="notice">This prototype does not provide server authentication, encrypted cloud sync or banking-grade security. Do not store bank passwords or sensitive customer credentials here.</div>
+      </section>
+
+      <div id="extensionPages"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const KEY = "ssc_data_v1";
+const SETTINGS = "ssc_settings_v1";
+const emptyData = {history:[],debts:[],reminders:[]};
+
+function readStore(key, fallback) {
+  try {
+    const v = JSON.parse(localStorage.getItem(key));
+    return v && typeof v === "object" ? v : JSON.parse(JSON.stringify(fallback));
+  } catch (_) {
+    return JSON.parse(JSON.stringify(fallback));
+  }
+}
+let data = Object.assign({}, emptyData, readStore(KEY, emptyData));
+let settings = Object.assign({theme:"light",language:"en"},readStore(SETTINGS,{theme:"light",language:"en"}));
+let lastValue = null, lastExpression = "";
+const registry = new Map();
+const builtInPages = ["home","calculator","finance","debts","history","reminders","settings"];
+
+function persist() {
+  try { localStorage.setItem(KEY,JSON.stringify(data)); return true; }
+  catch (_) { alert("Storage is unavailable or full. Export a backup."); return false; }
+}
+function persistSettings() {
+  try { localStorage.setItem(SETTINGS,JSON.stringify(settings)); }
+  catch (_) { alert("Could not save settings."); }
+}
+function id() { return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function esc(v) {
+  return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function fmt(v) {
+  return Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function download(name,text,type) {
+  const url=URL.createObjectURL(new Blob([text],{type}));
+  const a=document.createElement("a");a.href=url;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function clock() {
+  const d=new Date();
+  $("clock").textContent=d.toLocaleDateString(undefined,{dateStyle:"full"})+" · "+d.toLocaleTimeString();
+}
+clock();setInterval(clock,1000);
+
+function applyTheme() {
+  const dark=settings.theme==="dark" ||
+    (settings.theme==="auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.body.classList.toggle("dark",dark);
+  $("theme").value=settings.theme;
+}
+applyTheme();
+$("themeButton").addEventListener("click",()=>{
+  settings.theme=document.body.classList.contains("dark")?"light":"dark";
+  persistSettings();applyTheme();
+});
+
+function go(page) {
+  if(!builtInPages.includes(page)&&!registry.has(page))return;
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  const p=$("page-"+page)||$("extension-page-"+page);
+  if(p)p.classList.remove("hidden");
+  if(registry.has(page))registry.get(page).onOpen?.();
+  try{location.hash=page}catch(_){}
+}
+$("navigation").addEventListener("click",e=>{
+  const b=e.target.closest("[data-page]");if(b)go(b.dataset.page);
+});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-go]");if(b)go(b.dataset.go);
+});
+$("historySearch").addEventListener("input",renderHistory);
+$("debtSearch").addEventListener("input",renderDebts);
+
+function addHistory(expression,result,category="Calculator") {
+  data.history.unshift({id:id(),expression:String(expression),result:String(result),
+    category,time:new Date().toISOString()});
+  data.history=data.history.slice(0,2000);
+  persist();renderAll();
+}
+
+/* Safe calculator: only mathematical expressions and allowlisted functions. */
+function evaluate(source) {
+  let s=String(source).trim();
+  if(!s||s.length>250)throw Error("Enter a valid expression (maximum 250 characters).");
+  s=s.replace(/×/g,"*").replace(/÷/g,"/").replace(/π/g,"Math.PI");
+  s=s.replace(/\b(sin|cos|tan|sqrt|log|ln|abs|round|floor|ceil)\s*\(/gi,
+    (_,f)=>"Math."+f.toLowerCase()+"(");
+  s=s.replace(/\bpi\b/gi,"Math.PI");
+  if(!/^[0-9+\-*/%().,\sA-Za-z]*$/.test(s))throw Error("Unsupported characters.");
+  const words=s.match(/[A-Za-z]+/g)||[];
+  const allowed=new Set(["Math","PI","E","sin","cos","tan","sqrt","log","ln","abs","round","floor","ceil"]);
+  if(words.some(w=>!allowed.has(w)))throw Error("Unsupported identifier.");
+  if(/[;=\[\]{}]|=>/.test(s))throw Error("Invalid expression.");
+  const v=Function('"use strict";return ('+s+')')();
+  if(typeof v!=="number"||!Number.isFinite(v))throw Error("Result is not finite.");
+  return v;
+}
+function calculate() {
+  try {
+    const e=$("expression").value;
+    const v=evaluate(e);
+    lastValue=v;lastExpression=e;
+    $("result").textContent=String(Number(v.toPrecision(12)));
+    $("calcMessage").textContent=e+" = "+$("result").textContent;
+  } catch(err) {
+    lastValue=null;$("result").textContent="Error";
+    $("calcMessage").textContent=err.message;
+  }
+}
+$("keypad").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const input=$("expression"),k=b.dataset.key,a=b.dataset.action;
+  if(k!==undefined){input.value+=k;input.focus();return;}
+  if(a==="clear"){input.value="";$("result").textContent="0";lastValue=null;return;}
+  if(a==="back"){input.value=input.value.slice(0,-1);return;}
+  if(a==="equals"){calculate();return;}
+  if(a==="pi"){input.value+="pi";return;}
+  if(["sqrt","square","sin","cos","tan","log","ln"].includes(a)){
+    try{
+      const n=evaluate(input.value);let v;
+      if(a==="sqrt")v=Math.sqrt(n);
+      if(a==="square")v=n*n;
+      if(a==="sin")v=Math.sin(n*Math.PI/180);
+      if(a==="cos")v=Math.cos(n*Math.PI/180);
+      if(a==="tan")v=Math.tan(n*Math.PI/180);
+      if(a==="log")v=Math.log10(n);
+      if(a==="ln")v=Math.log(n);
+      if(!Number.isFinite(v))throw Error("Invalid function result.");
+      lastValue=v;lastExpression=a+"("+input.value+")";
+      $("result").textContent=String(Number(v.toPrecision(12)));
+      $("calcMessage").textContent=lastExpression+" = "+$("result").textContent;
+    }catch(err){$("calcMessage").textContent=err.message;}
+  }
+});
+$("expression").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();calculate();}});
+$("saveCalc").addEventListener("click",()=>{
+  if(lastValue===null)return alert("Calculate a valid result first.");
+  addHistory(lastExpression,lastValue);alert("Calculation saved.");
+});
+$("copyResult").addEventListener("click",async()=>{
+  if(lastValue===null)return alert("Calculate first.");
+  try{await navigator.clipboard.writeText(String(lastValue));alert("Copied.");}
+  catch(_){alert("Clipboard is unavailable in this browser.");}
+});
+
+$("calculateEMI").addEventListener("click",()=>{
+  const P=+$("principal").value,r=+$("rate").value/1200,y=+$("years").value;
+  if(!(P>0)||!Number.isFinite(r)||r<0||!(y>0))return alert("Enter valid loan details.");
+  const n=Math.ceil(y*12);
+  if(n>1200)return alert("Duration is too long.");
+  const payment=r===0?P/n:P*r/(1-Math.pow(1+r,-n));
+  $("emiResult").classList.remove("hidden");
+  $("emiResult").innerHTML=`Monthly payment: <strong>${fmt(payment)}</strong><br>Total payment: ${fmt(payment*n)}<br>Total interest: ${fmt(payment*n-P)}`;
+  addHistory("EMI for "+P+" at "+($("rate").value)+"% for "+y+" years",payment,"Finance");
+});
+$("calculateSavings").addEventListener("click",()=>{
+  const P=+$("savingsPrincipal").value,r=+$("savingsRate").value/100,y=+$("savingsYears").value;
+  if(P<0||r<0||y<0||![P,r,y].every(Number.isFinite))return alert("Enter valid values.");
+  const simple=P*(1+r*y),compound=P*Math.pow(1+r/12,12*y);
+  $("savingsResult").classList.remove("hidden");
+  $("savingsResult").innerHTML=`Simple interest total: <strong>${fmt(simple)}</strong><br>Simple interest earned: ${fmt(simple-P)}<br>Monthly compound total: ${fmt(compound)}<br>Compound interest earned: ${fmt(compound-P)}`;
+  addHistory("Compound interest on "+P+" at "+(r*100)+"% for "+y+" years",compound,"Finance");
+});
+
+$("debtForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const amount=+$("amount").value;
+  if(!($("person").value.trim())||!(amount>0)||!$("due").value)return alert("Complete all required fields.");
+  data.debts.unshift({id:id(),person:$("person").value.trim(),type:$("debtType").value,
+    amount,due:$("due").value,note:$("note").value.trim(),status:"open"});
+  persist();e.target.reset();renderAll();
+});
+function renderDebts() {
+  const q=$("debtSearch").value.toLowerCase();
+  const rows=data.debts.filter(d=>(d.person+" "+d.note+" "+d.type).toLowerCase().includes(q));
+  $("debtTable").innerHTML=rows.length?`<table><thead><tr><th>Name</th><th>Type</th><th>Amount</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
+  ${rows.map(d=>`<tr><td>${esc(d.person)}<div class="muted">${esc(d.note)}</div></td><td>${d.type==="receivable"?"They owe me":"I owe them"}</td><td>${fmt(d.amount)}</td><td>${esc(d.due)}</td><td>${esc(d.status)}</td><td><button class="btn secondary" data-paid="${esc(d.id)}">${d.status==="open"?"Mark paid":"Reopen"}</button><button class="btn secondary" data-debt-delete="${esc(d.id)}">Delete</button></td></tr>`).join("")}</tbody></table>`:"<p class='muted'>No records.</p>";
+}
+$("debtTable").addEventListener("click",e=>{
+  const p=e.target.closest("[data-paid]"),d=e.target.closest("[data-debt-delete]");
+  if(p){const item=data.debts.find(x=>x.id===p.dataset.paid);if(item)item.status=item.status==="open"?"paid":"open";persist();renderAll();}
+  if(d&&confirm("Delete this record?")){data.debts=data.debts.filter(x=>x.id!==d.dataset.debtDelete);persist();renderAll();}
+});
+
+function renderHistory() {
+  const q=$("historySearch").value.toLowerCase();
+  const rows=data.history.filter(x=>(x.expression+" "+x.result+" "+x.category).toLowerCase().includes(q));
+  $("historyTable").innerHTML=rows.length?`<table><thead><tr><th>Date</th><th>Expression</th><th>Result</th><th></th></tr></thead><tbody>
+  ${rows.map(x=>`<tr><td>${esc(new Date(x.time).toLocaleString())}</td><td>${esc(x.expression)}</td><td>${esc(x.result)}</td><td><button class="btn secondary" data-reopen="${esc(x.id)}">Open</button><button class="btn secondary" data-history-delete="${esc(x.id)}">Delete</button></td></tr>`).join("")}</tbody></table>`:"<p class='muted'>No history.</p>";
+}
+$("historyTable").addEventListener("click",e=>{
+  const o=e.target.closest("[data-reopen]"),d=e.target.closest("[data-history-delete]");
+  if(o){const x=data.history.find(y=>y.id===o.dataset.reopen);if(x){$("expression").value=x.expression;$("result").textContent=x.result;lastExpression=x.expression;lastValue=Number(x.result);go("calculator");}}
+  if(d&&confirm("Delete this history entry?")){data.history=data.history.filter(x=>x.id!==d.dataset.historyDelete);persist();renderAll();}
+});
+$("clearHistory").addEventListener("click",()=>{
+  if(confirm("Delete all history?")){data.history=[];persist();renderAll();}
+});
+$("exportHistory").addEventListener("click",()=>{
+  const rows=[["Date","Expression","Result","Category"],...data.history.map(x=>[x.time,x.expression,x.result,x.category])];
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  download("calculator-history.csv",csv,"text/csv;charset=utf-8");
+});
+
+$("reminderForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.reminders.unshift({id:id(),title:$("reminderTitle").value.trim(),date:$("reminderDate").value});
+  persist();e.target.reset();renderAll();
+});
+$("notificationPermission").addEventListener("click",async()=>{
+  if(!("Notification" in window))return alert("Notifications are not supported.");
+  try{alert("Permission: "+await Notification.requestPermission());}
+  catch(_){alert("Could not request permission.");}
+});
+function renderReminders() {
+  $("reminderList").innerHTML=data.reminders.length?data.reminders.map(r=>
+    `<div class="card"><strong>${esc(r.title)}</strong><p class="muted">${esc(new Date(r.date).toLocaleString())}</p><button class="btn secondary" data-reminder-delete="${esc(r.id)}">Delete</button></div>`
+  ).join(""):"<p class='muted'>No reminders saved.</p>";
+}
+$("reminderList").addEventListener("click",e=>{
+  const b=e.target.closest("[data-reminder-delete]");
+  if(b&&confirm("Delete reminder?")){data.reminders=data.reminders.filter(x=>x.id!==b.dataset.reminderDelete);persist();renderAll();}
+});
+
+$("saveSettings").addEventListener("click",()=>{
+  settings.theme=$("theme").value;settings.language=$("language").value;
+  persistSettings();applyTheme();applyLanguage();alert("Settings saved.");
+});
+function applyLanguage() {
+  const lang=settings.language||"en";
+  document.documentElement.lang=lang;
+  document.documentElement.dir=["ar","ur"].includes(lang)?"rtl":"ltr";
+  const words={
+    en:{home:"⌂ Home",calculator:"🧮 Calculator",finance:"🏦 Finance & EMI",debts:"📒 Debt records",history:"◷ History",reminders:"🔔 Reminders",settings:"⚙ Settings"},
+    bn:{home:"⌂ হোম",calculator:"🧮 ক্যালকুলেটর",finance:"🏦 ফাইন্যান্স ও EMI",debts:"📒 ঋণের হিসাব",history:"◷ ইতিহাস",reminders:"🔔 রিমাইন্ডার",settings:"⚙ সেটিংস"},
+    ar:{home:"⌂ الرئيسية",calculator:"🧮 الحاسبة",finance:"🏦 الأدوات المالية",debts:"📒 سجلات الديون",history:"◷ السجل",reminders:"🔔 التذكيرات",settings:"⚙ الإعدادات"},
+    ur:{home:"⌂ ہوم",calculator:"🧮 کیلکولیٹر",finance:"🏦 مالیاتی ٹولز",debts:"📒 قرض کے ریکارڈ",history:"◷ تاریخ",reminders:"🔔 یاد دہانیاں",settings:"⚙ ترتیبات"},
+    hi:{home:"⌂ होम",calculator:"🧮 कैलकुलेटर",finance:"🏦 वित्त उपकरण",debts:"📒 ऋण रिकॉर्ड",history:"◷ इतिहास",reminders:"🔔 रिमाइंडर",settings:"⚙ सेटिंग्स"}
+  };
+  document.querySelectorAll("[data-page]").forEach(b=>{
+    const key=b.dataset.page;if(words[lang]?.[key])b.textContent=words[lang][key];
+  });
+}
+$("theme").value=settings.theme;$("language").value=settings.language;
+applyLanguage();
+
+$("backup").addEventListener("click",()=>download("smart-calculator-backup.json",
+  JSON.stringify({version:1,data,settings},null,2),"application/json"));
+$("importButton").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+    const obj=JSON.parse(await file.text());
+    if(!obj.data||!Array.isArray(obj.data.history)||!Array.isArray(obj.data.debts)||!Array.isArray(obj.data.reminders))throw Error("Invalid backup file.");
+    if(!confirm("Replace current records with this backup?"))return;
+    data=obj.data;if(obj.settings)settings=obj.settings;
+    persist();persistSettings();applyTheme();applyLanguage();renderAll();alert("Backup imported.");
+  }catch(err){alert("Import failed: "+err.message);}
+  finally{e.target.value="";}
+});
+
+function renderAll(){
+  $("countHistory").textContent=data.history.length;
+  $("countDebts").textContent=data.debts.filter(x=>x.status==="open").length;
+  $("countReminders").textContent=data.reminders.length;
+  renderDebts();renderHistory();renderReminders();
+}
+renderAll();
+
+/* =========================================================
+   FEATURE EXTENSION ZONE
+   Future features can be added using SSC.registerFeature().
+   A large feature can be kept in its own JS file.
+   ========================================================= */
+window.SSC={
+  version:"1.0.0",
+  registerFeature(feature){
+    if(!feature||!/^[a-z0-9-]+$/.test(feature.id||"")||
+       !feature.title||typeof feature.render!=="function")
+      throw Error("A feature needs a valid id, title and render function.");
+    if(builtInPages.includes(feature.id)||registry.has(feature.id))
+      throw Error("Feature ID already exists.");
+    registry.set(feature.id,feature);
+
+    const nav=document.createElement("button");
+    nav.dataset.page=feature.id;
+    nav.textContent=(feature.icon||"🧩")+" "+feature.title;
+    $("extensionNavigation").appendChild(nav);
+
+    const page=document.createElement("section");
+    page.className="page hidden";page.id="extension-page-"+feature.id;
+    const host=document.createElement("div");
+    host.id="extension-host-"+feature.id;
+    page.appendChild(host);$("extensionPages").appendChild(page);
+    feature.render(host);
+  },
+  saveCalculation(expression,result,category="Extension"){
+    if(!Number.isFinite(Number(result)))throw Error("Result must be numeric.");
+    addHistory(expression,result,category);
+  },
+  getSummary(){
+    return {history:data.history.length,debts:data.debts.length,reminders:data.reminders.length};
+  }
+};
+
+// Example future module:
+// SSC.registerFeature({
+//   id:"unit-converter", title:"Unit Converter", icon:"📐",
+//   render(container) {
+//     container.innerHTML="<div class='card'><h3>Unit Converter</h3><p>New feature goes here.</p></div>";
+//   }
+// });
+</script>
+</body>
+</html>
