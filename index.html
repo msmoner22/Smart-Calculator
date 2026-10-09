@@ -1,583 +1,1210 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#101827">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="description" content="Smart Super Calculator — Calculator, Finance, EMI, Debt, Budget and Reminders">
 <title>Smart Super Calculator</title>
+
 <style>
 :root {
-  --bg:#f3f6fb;--card:#fff;--text:#172033;
-  --muted:#68768b;--border:#dfe6f0;--primary:#3858df;
+  --bg:#f3f6fb; --panel:#ffffff; --text:#172033; --muted:#667085;
+  --primary:#0f766e; --primary2:#115e59; --border:#e1e7ef;
+  --input:#f8fafc; --danger:#dc2626; --success:#15803d;
+  --shadow:0 8px 24px rgba(15,23,42,.06);
 }
-body.dark {
-  --bg:#101827;--card:#192538;--text:#edf2ff;
-  --muted:#a5b1c5;--border:#304056;--primary:#8297ff;
+[data-theme="dark"] {
+  --bg:#101722; --panel:#182333; --text:#f1f5f9; --muted:#a4b0c0;
+  --primary:#2dd4bf; --primary2:#14b8a6; --border:#2d3a4d;
+  --input:#111b29; --danger:#fb7185; --success:#4ade80;
+  --shadow:0 8px 24px rgba(0,0,0,.18);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
-font:16px system-ui,Arial,sans-serif}
-header{background:var(--card);border-bottom:1px solid var(--border);
-padding:14px 18px;display:flex;justify-content:space-between;
-align-items:center;gap:10px;position:sticky;top:0;z-index:5}
-h1{font-size:20px;margin:0}
-button,input,select{font:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-.app{max-width:1100px;margin:auto;padding:16px}
-.hero{background:linear-gradient(120deg,#263fb7,#5878f5);
-color:white;border-radius:18px;padding:20px;margin-bottom:16px}
-.hero h2{margin:0 0 8px}
-#clock{font-size:13px}
-.layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:16px}
-nav,.card{background:var(--card);border:1px solid var(--border);
-border-radius:15px;padding:13px}
-nav{height:max-content;position:sticky;top:85px}
-nav button{display:block;width:100%;text-align:left;padding:11px;
-margin:3px 0;border:0;border-radius:9px;background:transparent;color:var(--text)}
-nav button.active{background:var(--bg);color:var(--primary);font-weight:700}
-.card{margin-bottom:15px}
-h3{margin:0 0 14px}
-.page-title{margin:0 0 5px}
-.muted{color:var(--muted);font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-input,select{width:100%;padding:11px;border:1px solid var(--border);
-border-radius:9px;background:var(--bg);color:var(--text)}
-label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}
-.btn{padding:10px 13px;border:0;border-radius:9px;background:var(--primary);
-color:white;margin:5px 3px 5px 0}
-.btn.secondary{background:var(--bg);color:var(--text);border:1px solid var(--border)}
-.display{background:var(--bg);border:1px solid var(--border);
-padding:12px;border-radius:12px;margin-bottom:12px}
-#expression{text-align:right;font-size:22px}
-#result{text-align:right;font-size:27px;color:var(--primary);font-weight:700;
-overflow-wrap:anywhere;min-height:38px}
-.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-.key{padding:13px 4px;border:1px solid var(--border);border-radius:9px;
-background:var(--bg);color:var(--text)}
-.key.op{color:var(--primary)}
-.key.eq{background:var(--primary);color:white}
-.hidden{display:none!important}
-table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--border)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.app{max-width:1200px;margin:auto;padding:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 4px 20px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:var(--primary);color:#fff;font-size:24px;font-weight:800}
+.brand h1{font-size:clamp(20px,4vw,28px);margin:0}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--primary);color:#fff;font-weight:650}
+button:hover,.btn:hover{filter:brightness(.96)}
+.secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}
+.danger{background:var(--danger);color:#fff}
+.success{background:var(--success);color:#fff}
+.small{padding:6px 9px;font-size:13px}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px;margin-bottom:8px}
+.nav button{white-space:nowrap;flex-shrink:0}
+.nav button.active{background:var(--primary2);color:#fff}
+main{min-height:55vh}
+.page{display:none}
+.page.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.card{grid-column:span 12;background:var(--panel);border:1px solid var(--border);border-radius:17px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.span-6{grid-column:span 6}
+.span-4{grid-column:span 4}
+.span-3{grid-column:span 3}
+h2{font-size:21px;margin:0 0 14px}
+h3{font-size:16px;margin:0 0 10px}
+.muted{color:var(--muted)}
+.stat{font-size:clamp(23px,4vw,32px);font-weight:800;overflow-wrap:anywhere}
+.stat-label{font-size:13px;color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;min-width:0}
+.field label{font-size:13px;color:var(--muted);font-weight:650}
+input,select,textarea{width:100%;min-width:0;padding:11px 12px;border-radius:10px;border:1px solid var(--border);background:var(--input);color:var(--text)}
+input[type="checkbox"]{width:auto}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.result{border-radius:12px;padding:13px;background:var(--input);border:1px solid var(--border);margin-top:12px;overflow-wrap:anywhere}
+.result strong{font-size:20px}
+.calc{max-width:600px;margin:auto}
+.calc-display{background:var(--input);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+#calcExpression{width:100%;border:0;background:transparent;text-align:right;font-size:16px;color:var(--muted);padding:4px}
+#calcResult{font-size:clamp(30px,7vw,42px);font-weight:750;text-align:right;overflow-wrap:anywhere;min-height:55px}
+.keypad{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.keypad button{padding:14px 3px;font-size:17px;min-height:50px}
+.keypad .operator{background:var(--input);color:var(--text);border:1px solid var(--border)}
+.keypad .equal{background:var(--primary2);color:#fff}
+.keypad .wide{grid-column:span 2}
 .table-wrap{overflow-x:auto}
-.notice{padding:12px;border:1px solid var(--border);border-radius:10px;
-color:var(--muted);font-size:13px;margin-top:12px}
-@media(max-width:700px){
-.layout{grid-template-columns:1fr}
-nav{position:static;display:flex;overflow-x:auto;gap:3px}
-nav button{white-space:nowrap;width:auto;flex-shrink:0}
-.grid{grid-template-columns:1fr}
-.app{padding:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:700}
+.empty{text-align:center;padding:20px;color:var(--muted)}
+.badge{display:inline-block;padding:3px 8px;border-radius:99px;background:var(--input);border:1px solid var(--border);font-size:12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 5px}
+.notice{border-left:4px solid var(--primary);padding:10px 12px;background:var(--input);border-radius:7px;font-size:13px;margin:10px 0}
+hr{border:0;border-top:1px solid var(--border);margin:16px 0}
+@media(max-width:760px){
+ .span-6,.span-4,.span-3{grid-column:span 12}
+ .app{padding:10px}
+ .card{padding:14px}
+ header{padding-bottom:12px}
+ .keypad{gap:6px}
+ .keypad button{padding:12px 2px}
+}
+@media(min-width:761px) and (max-width:950px){
+ .span-3{grid-column:span 6}
+ .span-4{grid-column:span 6}
 }
 </style>
 </head>
+
 <body>
+<div class="app">
 <header>
-  <div><h1>∑ Smart Super Calculator</h1>
-  <div class="muted">Calculate smarter. Manage better.</div></div>
-  <button class="btn secondary" id="themeButton">☾ Theme</button>
+  <div class="brand">
+    <div class="logo">∑</div>
+    <div>
+      <h1>Smart Super Calculator</h1>
+      <p id="tagline">আপনার স্মার্ট হিসাবের সহকারী</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="secondary" id="themeButton" type="button">🌙 থিম</button>
+    <button class="secondary" id="installButton" type="button" hidden>＋ Install</button>
+  </div>
 </header>
 
-<div class="app">
-  <section class="hero">
-    <h2 id="welcome">Your smart workspace</h2>
-    <div>Calculator • Finance • Records</div>
-    <div id="clock"></div>
-  </section>
+<nav class="nav" aria-label="Main navigation">
+  <button class="active" data-page="home">🏠 হোম</button>
+  <button data-page="calculator">🧮 ক্যালকুলেটর</button>
+  <button data-page="finance">💰 অর্থ ও EMI</button>
+  <button data-page="budget">📊 বাজেট</button>
+  <button data-page="debts">📒 দেনা-পাওনা</button>
+  <button data-page="reminders">⏰ রিমাইন্ডার</button>
+  <button data-page="history">🧾 ইতিহাস</button>
+  <button data-page="settings">⚙️ সেটিংস</button>
+</nav>
 
-  <div class="layout">
-    <nav id="navigation">
-      <button class="active" data-page="home">⌂ Home</button>
-      <button data-page="calculator">🧮 Calculator</button>
-      <button data-page="finance">🏦 Finance & EMI</button>
-      <button data-page="debts">📒 Debt records</button>
-      <button data-page="history">◷ History</button>
-      <button data-page="reminders">🔔 Reminders</button>
-      <button data-page="settings">⚙ Settings</button>
-      <div id="extensionNavigation"></div>
-    </nav>
+<main>
+<!-- HOME -->
+<section class="page active" id="page-home">
+  <div class="grid">
+    <div class="card span-3"><div class="stat-label">আজকের তারিখ</div><div class="stat" id="todayDate">—</div></div>
+    <div class="card span-3"><div class="stat-label">বর্তমান সময়</div><div class="stat" id="liveClock">—</div></div>
+    <div class="card span-3"><div class="stat-label">মোট আয়</div><div class="stat" id="homeIncome">0</div></div>
+    <div class="card span-3"><div class="stat-label">মোট ব্যয়</div><div class="stat" id="homeExpense">0</div></div>
 
-    <main id="mainContent">
-      <section class="page" id="page-home">
-        <h2 class="page-title">Dashboard</h2>
-        <p class="muted">Your financial workspace at a glance.</p>
-        <div class="grid">
-          <div class="card">Saved calculations<h2 id="countHistory">0</h2></div>
-          <div class="card">Open debt records<h2 id="countDebts">0</h2></div>
-          <div class="card">Reminders<h2 id="countReminders">0</h2></div>
-          <div class="card">App version<h2>1.0</h2></div>
-        </div>
-        <div class="card">
-          <h3>Quick actions</h3>
-          <button class="btn" data-go="calculator">Open Calculator</button>
-          <button class="btn" data-go="finance">Calculate EMI</button>
-          <button class="btn" data-go="debts">Add a debt record</button>
-        </div>
-        <div class="notice">This starter version stores records in this browser on this device. It does not sync automatically to other devices.</div>
-      </section>
-
-      <section class="page hidden" id="page-calculator">
-        <h2 class="page-title">Smart Calculator</h2>
-        <p class="muted">Arithmetic and scientific operations.</p>
-        <div class="card">
-          <div class="display">
-            <input id="expression" aria-label="Expression" placeholder="Example: (25+5)*2">
-            <div id="result" aria-live="polite">0</div>
-          </div>
-          <div class="keys" id="keypad">
-            <button class="key op" data-key="(">(</button>
-            <button class="key op" data-key=")">)</button>
-            <button class="key op" data-action="clear">C</button>
-            <button class="key op" data-action="back">⌫</button>
-            <button class="key" data-key="7">7</button>
-            <button class="key" data-key="8">8</button>
-            <button class="key" data-key="9">9</button>
-            <button class="key op" data-key="/">÷</button>
-            <button class="key" data-key="4">4</button>
-            <button class="key" data-key="5">5</button>
-            <button class="key" data-key="6">6</button>
-            <button class="key op" data-key="*">×</button>
-            <button class="key" data-key="1">1</button>
-            <button class="key" data-key="2">2</button>
-            <button class="key" data-key="3">3</button>
-            <button class="key op" data-key="-">−</button>
-            <button class="key" data-key="0">0</button>
-            <button class="key" data-key=".">.</button>
-            <button class="key op" data-key="%">%</button>
-            <button class="key op" data-key="+">+</button>
-            <button class="key op" data-action="sqrt">√</button>
-            <button class="key op" data-action="square">x²</button>
-            <button class="key op" data-action="sin">sin</button>
-            <button class="key op" data-action="cos">cos</button>
-            <button class="key op" data-action="tan">tan</button>
-            <button class="key op" data-action="log">log</button>
-            <button class="key op" data-action="ln">ln</button>
-            <button class="key op" data-action="pi">π</button>
-            <button class="key eq" data-action="equals">=</button>
-          </div>
-          <p class="muted">Trigonometric functions use degrees.</p>
-          <button class="btn" id="saveCalc">Save calculation</button>
-          <button class="btn secondary" id="copyResult">Copy result</button>
-          <div id="calcMessage" class="muted"></div>
-        </div>
-      </section>
-
-      <section class="page hidden" id="page-finance">
-        <h2 class="page-title">Finance & EMI</h2>
-        <div class="card">
-          <h3>Loan repayment estimate</h3>
-          <label for="principal">Loan amount</label><input id="principal" type="number" min="0" value="100000">
-          <label for="rate">Annual interest rate (%)</label><input id="rate" type="number" min="0" step="any" value="10">
-          <label for="years">Duration in years</label><input id="years" type="number" min="0.01" step="any" value="3">
-          <button class="btn" id="calculateEMI">Calculate EMI</button>
-          <div id="emiResult" class="notice hidden"></div>
-        </div>
-        <div class="card">
-          <h3>Simple & compound interest</h3>
-          <label for="savingsPrincipal">Starting amount</label><input id="savingsPrincipal" type="number" min="0" value="10000">
-          <label for="savingsRate">Annual rate (%)</label><input id="savingsRate" type="number" min="0" step="any" value="8">
-          <label for="savingsYears">Years</label><input id="savingsYears" type="number" min="0" step="any" value="5">
-          <button class="btn" id="calculateSavings">Calculate interest</button>
-          <div id="savingsResult" class="notice hidden"></div>
-        </div>
-        <p class="muted">Estimates only. Actual bank terms, taxes and fees may differ.</p>
-      </section>
-
-      <section class="page hidden" id="page-debts">
-        <h2 class="page-title">Debt records</h2>
-        <div class="card">
-          <h3>Add a record</h3>
-          <form id="debtForm">
-            <label for="person">Person or company</label><input id="person" required maxlength="100">
-            <label for="debtType">Type</label>
-            <select id="debtType"><option value="receivable">They owe me</option><option value="payable">I owe them</option></select>
-            <label for="amount">Amount</label><input id="amount" type="number" min="0.01" step="any" required>
-            <label for="due">Due date</label><input id="due" type="date" required>
-            <label for="note">Notes</label><input id="note" maxlength="250">
-            <button class="btn" type="submit">Save record</button>
-          </form>
-        </div>
-        <div class="card">
-          <h3>Saved records</h3>
-          <input id="debtSearch" placeholder="Search records">
-          <div class="table-wrap" id="debtTable"></div>
-        </div>
-      </section>
-
-      <section class="page hidden" id="page-history">
-        <h2 class="page-title">Calculation history</h2>
-        <div class="card">
-          <input id="historySearch" placeholder="Search history">
-          <button class="btn secondary" id="exportHistory">Export CSV</button>
-          <button class="btn secondary" id="clearHistory">Clear history</button>
-          <div class="table-wrap" id="historyTable"></div>
-        </div>
-      </section>
-
-      <section class="page hidden" id="page-reminders">
-        <h2 class="page-title">Reminders</h2>
-        <div class="card">
-          <form id="reminderForm">
-            <label for="reminderTitle">Reminder</label><input id="reminderTitle" required maxlength="120">
-            <label for="reminderDate">Date and time</label><input id="reminderDate" type="datetime-local" required>
-            <button class="btn" type="submit">Save reminder</button>
-          </form>
-          <button class="btn secondary" id="notificationPermission">Enable browser notifications</button>
-          <p class="muted">Alerts while the app is closed are not guaranteed in this prototype.</p>
-          <div id="reminderList"></div>
-        </div>
-      </section>
-
-      <section class="page hidden" id="page-settings">
-        <h2 class="page-title">Settings</h2>
-        <div class="card">
-          <h3>Appearance</h3>
-          <label for="theme">Theme</label>
-          <select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="auto">Automatic</option></select>
-          <label for="language">Language</label>
-          <select id="language">
-            <option value="en">English</option>
-            <option value="bn">বাংলা</option>
-            <option value="ar">العربية</option>
-            <option value="ur">اردو</option>
-            <option value="hi">हिन्दी</option>
-          </select>
-          <button class="btn" id="saveSettings">Save settings</button>
-        </div>
-        <div class="card">
-          <h3>Backup and restore</h3>
-          <button class="btn" id="backup">Export JSON backup</button>
-          <button class="btn secondary" id="importButton">Import JSON backup</button>
-          <input id="importFile" type="file" accept="application/json,.json" class="hidden">
-          <p class="muted">Backups may contain private financial records. Keep them secure.</p>
-        </div>
-        <div class="notice">This prototype does not provide server authentication, encrypted cloud sync or banking-grade security. Do not store bank passwords or sensitive customer credentials here.</div>
-      </section>
-
-      <div id="extensionPages"></div>
-    </main>
+    <div class="card span-6">
+      <h2>দ্রুত হিসাব</h2>
+      <p class="muted">সাধারণ হিসাব বা বৈজ্ঞানিক গণনা শুরু করুন।</p>
+      <div class="actions">
+        <button data-goto="calculator">ক্যালকুলেটর খুলুন</button>
+        <button class="secondary" data-goto="finance">EMI হিসাব</button>
+        <button class="secondary" data-goto="budget">আয়-ব্যয়</button>
+      </div>
+    </div>
+    <div class="card span-6">
+      <h2>আপনার হিসাব</h2>
+      <div class="row">
+        <div><div class="stat-label">বাজেট ব্যালেন্স</div><div class="stat" id="homeBalance">0</div></div>
+        <div><div class="stat-label">দেনা-পাওনার রেকর্ড</div><div class="stat" id="homeDebtCount">0</div></div>
+      </div>
+      <div class="notice">আপনার রেকর্ড এই ব্রাউজারে সংরক্ষিত হয়। নিয়মিত ব্যাকআপ রাখুন।</div>
+    </div>
+    <div class="card">
+      <h2>আসন্ন রিমাইন্ডার</h2>
+      <div id="homeReminders" class="muted">কোনো রিমাইন্ডার নেই।</div>
+    </div>
   </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="page" id="page-calculator">
+  <div class="card calc">
+    <h2>বৈজ্ঞানিক ক্যালকুলেটর</h2>
+    <p class="muted">উদাহরণ: 2*(3+4), sqrt(81), sin(30), log(100), 2^8</p>
+    <div class="calc-display">
+      <input id="calcExpression" aria-label="গাণিতিক এক্সপ্রেশন" placeholder="এখানে হিসাব লিখুন" autocomplete="off">
+      <div id="calcResult" aria-live="polite">0</div>
+    </div>
+    <div class="keypad" id="keypad">
+      <button class="operator" data-insert="sin(">sin</button>
+      <button class="operator" data-insert="cos(">cos</button>
+      <button class="operator" data-insert="tan(">tan</button>
+      <button class="operator" data-insert="sqrt(">√</button>
+      <button class="operator" data-action="backspace">⌫</button>
+
+      <button class="operator" data-insert="log(">log</button>
+      <button class="operator" data-insert="ln(">ln</button>
+      <button class="operator" data-insert="(">(</button>
+      <button class="operator" data-insert=")">)</button>
+      <button class="operator" data-action="clear">AC</button>
+
+      <button data-insert="7">7</button>
+      <button data-insert="8">8</button>
+      <button data-insert="9">9</button>
+      <button class="operator" data-insert="/">÷</button>
+      <button class="operator" data-insert="^">xʸ</button>
+
+      <button data-insert="4">4</button>
+      <button data-insert="5">5</button>
+      <button data-insert="6">6</button>
+      <button class="operator" data-insert="*">×</button>
+      <button class="operator" data-insert="%">mod</button>
+
+      <button data-insert="1">1</button>
+      <button data-insert="2">2</button>
+      <button data-insert="3">3</button>
+      <button class="operator" data-insert="-">−</button>
+      <button class="operator" data-insert="π">π</button>
+
+      <button data-insert="0">0</button>
+      <button data-insert=".">.</button>
+      <button class="operator" data-insert="e">e</button>
+      <button class="operator" data-insert="+">+</button>
+      <button class="equal" data-action="equals">=</button>
+
+      <button class="secondary wide" data-action="copy-result">ফলাফল কপি</button>
+      <button class="secondary wide" data-action="save-result">ইতিহাসে রাখুন</button>
+    </div>
+    <p class="muted" id="calcMessage" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- FINANCE -->
+<section class="page" id="page-finance">
+  <div class="grid">
+    <div class="card span-6">
+      <h2>EMI / মাসিক কিস্তি</h2>
+      <div class="field"><label for="emiPrincipal">ঋণের পরিমাণ</label><input id="emiPrincipal" type="number" min="0" placeholder="যেমন 500000"></div>
+      <div class="row">
+        <div class="field"><label for="emiRate">বার্ষিক সুদ (%)</label><input id="emiRate" type="number" min="0" step="any" value="10"></div>
+        <div class="field"><label for="emiYears">মেয়াদ (বছর)</label><input id="emiYears" type="number" min="0.01" step="any" value="5"></div>
+      </div>
+      <button id="emiButton">EMI হিসাব করুন</button>
+      <div class="result" id="emiResult">ফলাফল এখানে দেখাবে।</div>
+    </div>
+
+    <div class="card span-6">
+      <h2>সরল ও চক্রবৃদ্ধি সুদ</h2>
+      <div class="field"><label for="interestPrincipal">মূলধন</label><input id="interestPrincipal" type="number" min="0" placeholder="মূল টাকা"></div>
+      <div class="row">
+        <div class="field"><label for="interestRate">বার্ষিক সুদ (%)</label><input id="interestRate" type="number" min="0" step="any" value="5"></div>
+        <div class="field"><label for="interestYears">সময় (বছর)</label><input id="interestYears" type="number" min="0" step="any" value="3"></div>
+      </div>
+      <div class="field"><label for="compoundFrequency">চক্রবৃদ্ধির সংখ্যা / বছর</label>
+        <select id="compoundFrequency"><option value="1">বার্ষিক</option><option value="2">অর্ধবার্ষিক</option><option value="4">ত্রৈমাসিক</option><option value="12">মাসিক</option><option value="365">দৈনিক</option></select>
+      </div>
+      <button id="interestButton">সুদ হিসাব করুন</button>
+      <div class="result" id="interestResult">ফলাফল এখানে দেখাবে।</div>
+    </div>
+
+    <div class="card">
+      <h2>শতকরা হিসাব</h2>
+      <div class="row">
+        <div class="field"><label for="percentValue">মূল সংখ্যা</label><input id="percentValue" type="number" placeholder="যেমন 800"></div>
+        <div class="field"><label for="percentRate">শতকরা (%)</label><input id="percentRate" type="number" placeholder="যেমন 15"></div>
+      </div>
+      <button id="percentButton">শতকরা হিসাব করুন</button>
+      <div class="result" id="percentResult">ফলাফল এখানে দেখাবে।</div>
+    </div>
+  </div>
+</section>
+
+<!-- BUDGET -->
+<section class="page" id="page-budget">
+  <div class="grid">
+    <div class="card span-6">
+      <h2>আয়-ব্যয় যোগ করুন</h2>
+      <form id="budgetForm">
+        <div class="row">
+          <div class="field"><label for="budgetType">ধরন</label><select id="budgetType"><option value="income">আয়</option><option value="expense">ব্যয়</option></select></div>
+          <div class="field"><label for="budgetAmount">পরিমাণ</label><input id="budgetAmount" type="number" min="0.01" step="any" required></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="budgetCategory">বিভাগ</label><input id="budgetCategory" maxlength="60" placeholder="যেমন খাবার, বেতন" required></div>
+          <div class="field"><label for="budgetDate">তারিখ</label><input id="budgetDate" type="date" required></div>
+        </div>
+        <div class="field"><label for="budgetNote">বিবরণ (ঐচ্ছিক)</label><input id="budgetNote" maxlength="200" placeholder="ছোট বিবরণ"></div>
+        <button type="submit">রেকর্ড সংরক্ষণ</button>
+      </form>
+    </div>
+    <div class="card span-6">
+      <h2>সারাংশ</h2>
+      <div class="row">
+        <div><div class="stat-label">মোট আয়</div><div class="stat" id="budgetIncome">0</div></div>
+        <div><div class="stat-label">মোট ব্যয়</div><div class="stat" id="budgetExpense">0</div></div>
+      </div>
+      <hr>
+      <div class="stat-label">বর্তমান ব্যালেন্স</div>
+      <div class="stat" id="budgetNet">0</div>
+    </div>
+    <div class="card">
+      <h2>আয়-ব্যয়ের রেকর্ড</h2>
+      <div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>ধরন</th><th>বিভাগ</th><th>পরিমাণ</th><th>বিবরণ</th><th>কাজ</th></tr></thead><tbody id="budgetRows"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEBTS -->
+<section class="page" id="page-debts">
+  <div class="grid">
+    <div class="card span-6">
+      <h2>দেনা-পাওনা যোগ করুন</h2>
+      <form id="debtForm">
+        <div class="field"><label for="debtPerson">ব্যক্তি / প্রতিষ্ঠানের নাম</label><input id="debtPerson" maxlength="100" required></div>
+        <div class="row">
+          <div class="field"><label for="debtType">ধরন</label><select id="debtType"><option value="owed">আমি দেব (দেনা)</option><option value="receivable">আমি পাব (পাওনা)</option></select></div>
+          <div class="field"><label for="debtAmount">পরিমাণ</label><input id="debtAmount" type="number" min="0.01" step="any" required></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="debtDue">পরিশোধের তারিখ</label><input id="debtDue" type="date"></div>
+          <div class="field"><label for="debtNote">বিবরণ</label><input id="debtNote" maxlength="200"></div>
+        </div>
+        <button type="submit">দেনা-পাওনা সংরক্ষণ</button>
+      </form>
+    </div>
+    <div class="card span-6">
+      <h2>মোট হিসাব</h2>
+      <div class="stat-label">আমি দেব</div><div class="stat" id="totalOwed">0</div>
+      <hr>
+      <div class="stat-label">আমি পাব</div><div class="stat" id="totalReceivable">0</div>
+    </div>
+    <div class="card">
+      <h2>দেনা-পাওনার তালিকা</h2>
+      <div class="table-wrap"><table><thead><tr><th>নাম</th><th>ধরন</th><th>পরিমাণ</th><th>তারিখ</th><th>বিবরণ</th><th>কাজ</th></tr></thead><tbody id="debtRows"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- REMINDERS -->
+<section class="page" id="page-reminders">
+  <div class="grid">
+    <div class="card span-6">
+      <h2>নতুন রিমাইন্ডার</h2>
+      <form id="reminderForm">
+        <div class="field"><label for="reminderTitle">শিরোনাম</label><input id="reminderTitle" maxlength="100" required placeholder="যেমন বিল পরিশোধ"></div>
+        <div class="row">
+          <div class="field"><label for="reminderDate">তারিখ</label><input id="reminderDate" type="date" required></div>
+          <div class="field"><label for="reminderTime">সময়</label><input id="reminderTime" type="time" required></div>
+        </div>
+        <div class="field"><label for="reminderNote">বিবরণ (ঐচ্ছিক)</label><input id="reminderNote" maxlength="200"></div>
+        <button type="submit">রিমাইন্ডার সংরক্ষণ</button>
+      </form>
+      <div class="actions"><button id="notificationButton" class="secondary" type="button">🔔 নোটিফিকেশন অনুমতি</button></div>
+      <p class="muted" id="notificationStatus"></p>
+    </div>
+    <div class="card span-6">
+      <h2>রিমাইন্ডার সম্পর্কে</h2>
+      <div class="notice">এই সংস্করণে রিমাইন্ডার চেক করার জন্য অ্যাপটি খোলা থাকা দরকার। ব্রাউজার বন্ধ থাকলে নির্দিষ্ট সময়ে নোটিফিকেশন আসবে—এমন নিশ্চয়তা নেই।</div>
+      <p class="muted">ব্যাকগ্রাউন্ড নোটিফিকেশনের জন্য আলাদা Service Worker এবং উপযুক্ত Push ব্যবস্থা প্রয়োজন হতে পারে।</p>
+    </div>
+    <div class="card">
+      <h2>রিমাইন্ডারের তালিকা</h2>
+      <div class="table-wrap"><table><thead><tr><th>তারিখ ও সময়</th><th>শিরোনাম</th><th>বিবরণ</th><th>অবস্থা</th><th>কাজ</th></tr></thead><tbody id="reminderRows"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section class="page" id="page-history">
+  <div class="card">
+    <div class="row">
+      <div><h2>হিসাবের ইতিহাস</h2><p class="muted">সংরক্ষিত ক্যালকুলেটর ফলাফল</p></div>
+      <div class="actions"><button id="exportHistoryCsv" class="secondary">CSV ডাউনলোড</button><button id="clearHistory" class="danger">ইতিহাস মুছুন</button></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>সময়</th><th>হিসাব</th><th>ফলাফল</th><th>কাজ</th></tr></thead><tbody id="historyRows"></tbody></table></div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+  <div class="grid">
+    <div class="card span-6">
+      <h2>অ্যাপ সেটিংস</h2>
+      <div class="field"><label for="languageSelect">ভাষা নির্বাচন</label>
+        <select id="languageSelect">
+          <option value="bn">বাংলা</option><option value="en">English</option><option value="ar">العربية</option><option value="ur">اردو</option><option value="hi">हिन्दी</option>
+        </select>
+      </div>
+      <div class="field"><label for="currencySelect">মুদ্রার নাম (শুধু প্রদর্শন)</label>
+        <select id="currencySelect">
+          <option value="BDT">BDT — বাংলাদেশি টাকা</option>
+          <option value="USD">USD — US Dollar</option>
+          <option value="SAR">SAR — Saudi Riyal</option>
+          <option value="AED">AED — UAE Dirham</option>
+          <option value="INR">INR — Indian Rupee</option>
+          <option value="GBP">GBP — Pound Sterling</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="MYR">MYR — Malaysian Ringgit</option>
+          <option value="PKR">PKR — Pakistani Rupee</option>
+          <option value="OMR">OMR — Omani Rial</option>
+        </select>
+      </div>
+      <div class="field"><label for="themeSelect">থিম</label><select id="themeSelect"><option value="light">লাইট</option><option value="dark">ডার্ক</option><option value="auto">সিস্টেম অনুযায়ী</option></select></div>
+      <button id="saveSettings">সেটিংস সংরক্ষণ</button>
+    </div>
+    <div class="card span-6">
+      <h2>ব্যাকআপ ও পুনরুদ্ধার</h2>
+      <p class="muted">আপনার রেকর্ড JSON ফাইলে সংরক্ষণ করুন। অন্য ডিভাইসে নিতে সেই ফাইল ইমপোর্ট করুন।</p>
+      <div class="actions"><button id="backupButton">⬇ JSON ব্যাকআপ</button><button id="csvBudgetButton" class="secondary">আয়-ব্যয় CSV</button></div>
+      <div class="field" style="margin-top:14px"><label for="restoreFile">ব্যাকআপ ফাইল নির্বাচন</label><input id="restoreFile" type="file" accept=".json,application/json"></div>
+      <button id="restoreButton" class="secondary">ব্যাকআপ পুনরুদ্ধার</button>
+      <hr>
+      <button id="deleteAllData" class="danger">সব স্থানীয় ডেটা মুছুন</button>
+    </div>
+    <div class="card">
+      <h2>গোপনীয়তা ও নিরাপত্তা</h2>
+      <ul>
+        <li>এই সংস্করণে কোনো ব্যাংক অ্যাকাউন্টের সঙ্গে সংযোগ করা হয় না।</li>
+        <li>তথ্য ব্রাউজারের localStorage-এ রাখা হয়; এটি এনক্রিপ্ট করা ভল্ট নয়।</li>
+        <li>অন্য কেউ একই ডিভাইস বা ব্রাউজার ব্যবহার করলে সংরক্ষিত তথ্য দেখতে পারে।</li>
+        <li>ব্যাকআপ ফাইল ব্যক্তিগতভাবে নিরাপদ স্থানে রাখুন।</li>
+        <li>মুদ্রা নির্বাচন বিনিময় হার হিসাব করে না।</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>Smart Super Calculator · হিসাব যাচাই করে ব্যবহার করুন · নিয়মিত ব্যাকআপ রাখুন</footer>
 </div>
 
 <script>
 "use strict";
 
-const $ = id => document.getElementById(id);
-const KEY = "ssc_data_v1";
-const SETTINGS = "ssc_settings_v1";
-const emptyData = {history:[],debts:[],reminders:[]};
+/* ---------- Storage and application state ---------- */
+const STORAGE_KEY = "smartSuperCalculator.master.v1";
 
-function readStore(key, fallback) {
-  try {
-    const v = JSON.parse(localStorage.getItem(key));
-    return v && typeof v === "object" ? v : JSON.parse(JSON.stringify(fallback));
-  } catch (_) {
-    return JSON.parse(JSON.stringify(fallback));
-  }
-}
-let data = Object.assign({}, emptyData, readStore(KEY, emptyData));
-let settings = Object.assign({theme:"light",language:"en"},readStore(SETTINGS,{theme:"light",language:"en"}));
-let lastValue = null, lastExpression = "";
-const registry = new Map();
-const builtInPages = ["home","calculator","finance","debts","history","reminders","settings"];
-
-function persist() {
-  try { localStorage.setItem(KEY,JSON.stringify(data)); return true; }
-  catch (_) { alert("Storage is unavailable or full. Export a backup."); return false; }
-}
-function persistSettings() {
-  try { localStorage.setItem(SETTINGS,JSON.stringify(settings)); }
-  catch (_) { alert("Could not save settings."); }
-}
-function id() { return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
-function esc(v) {
-  return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function fmt(v) {
-  return Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-function download(name,text,type) {
-  const url=URL.createObjectURL(new Blob([text],{type}));
-  const a=document.createElement("a");a.href=url;a.download=name;a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
-function clock() {
-  const d=new Date();
-  $("clock").textContent=d.toLocaleDateString(undefined,{dateStyle:"full"})+" · "+d.toLocaleTimeString();
-}
-clock();setInterval(clock,1000);
-
-function applyTheme() {
-  const dark=settings.theme==="dark" ||
-    (settings.theme==="auto" && matchMedia("(prefers-color-scheme: dark)").matches);
-  document.body.classList.toggle("dark",dark);
-  $("theme").value=settings.theme;
-}
-applyTheme();
-$("themeButton").addEventListener("click",()=>{
-  settings.theme=document.body.classList.contains("dark")?"light":"dark";
-  persistSettings();applyTheme();
-});
-
-function go(page) {
-  if(!builtInPages.includes(page)&&!registry.has(page))return;
-  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-  document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-  const p=$("page-"+page)||$("extension-page-"+page);
-  if(p)p.classList.remove("hidden");
-  if(registry.has(page))registry.get(page).onOpen?.();
-  try{location.hash=page}catch(_){}
-}
-$("navigation").addEventListener("click",e=>{
-  const b=e.target.closest("[data-page]");if(b)go(b.dataset.page);
-});
-document.addEventListener("click",e=>{
-  const b=e.target.closest("[data-go]");if(b)go(b.dataset.go);
-});
-$("historySearch").addEventListener("input",renderHistory);
-$("debtSearch").addEventListener("input",renderDebts);
-
-function addHistory(expression,result,category="Calculator") {
-  data.history.unshift({id:id(),expression:String(expression),result:String(result),
-    category,time:new Date().toISOString()});
-  data.history=data.history.slice(0,2000);
-  persist();renderAll();
-}
-
-/* Safe calculator: only mathematical expressions and allowlisted functions. */
-function evaluate(source) {
-  let s=String(source).trim();
-  if(!s||s.length>250)throw Error("Enter a valid expression (maximum 250 characters).");
-  s=s.replace(/×/g,"*").replace(/÷/g,"/").replace(/π/g,"Math.PI");
-  s=s.replace(/\b(sin|cos|tan|sqrt|log|ln|abs|round|floor|ceil)\s*\(/gi,
-    (_,f)=>"Math."+f.toLowerCase()+"(");
-  s=s.replace(/\bpi\b/gi,"Math.PI");
-  if(!/^[0-9+\-*/%().,\sA-Za-z]*$/.test(s))throw Error("Unsupported characters.");
-  const words=s.match(/[A-Za-z]+/g)||[];
-  const allowed=new Set(["Math","PI","E","sin","cos","tan","sqrt","log","ln","abs","round","floor","ceil"]);
-  if(words.some(w=>!allowed.has(w)))throw Error("Unsupported identifier.");
-  if(/[;=\[\]{}]|=>/.test(s))throw Error("Invalid expression.");
-  const v=Function('"use strict";return ('+s+')')();
-  if(typeof v!=="number"||!Number.isFinite(v))throw Error("Result is not finite.");
-  return v;
-}
-function calculate() {
-  try {
-    const e=$("expression").value;
-    const v=evaluate(e);
-    lastValue=v;lastExpression=e;
-    $("result").textContent=String(Number(v.toPrecision(12)));
-    $("calcMessage").textContent=e+" = "+$("result").textContent;
-  } catch(err) {
-    lastValue=null;$("result").textContent="Error";
-    $("calcMessage").textContent=err.message;
-  }
-}
-$("keypad").addEventListener("click",e=>{
-  const b=e.target.closest("button");if(!b)return;
-  const input=$("expression"),k=b.dataset.key,a=b.dataset.action;
-  if(k!==undefined){input.value+=k;input.focus();return;}
-  if(a==="clear"){input.value="";$("result").textContent="0";lastValue=null;return;}
-  if(a==="back"){input.value=input.value.slice(0,-1);return;}
-  if(a==="equals"){calculate();return;}
-  if(a==="pi"){input.value+="pi";return;}
-  if(["sqrt","square","sin","cos","tan","log","ln"].includes(a)){
-    try{
-      const n=evaluate(input.value);let v;
-      if(a==="sqrt")v=Math.sqrt(n);
-      if(a==="square")v=n*n;
-      if(a==="sin")v=Math.sin(n*Math.PI/180);
-      if(a==="cos")v=Math.cos(n*Math.PI/180);
-      if(a==="tan")v=Math.tan(n*Math.PI/180);
-      if(a==="log")v=Math.log10(n);
-      if(a==="ln")v=Math.log(n);
-      if(!Number.isFinite(v))throw Error("Invalid function result.");
-      lastValue=v;lastExpression=a+"("+input.value+")";
-      $("result").textContent=String(Number(v.toPrecision(12)));
-      $("calcMessage").textContent=lastExpression+" = "+$("result").textContent;
-    }catch(err){$("calcMessage").textContent=err.message;}
-  }
-});
-$("expression").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();calculate();}});
-$("saveCalc").addEventListener("click",()=>{
-  if(lastValue===null)return alert("Calculate a valid result first.");
-  addHistory(lastExpression,lastValue);alert("Calculation saved.");
-});
-$("copyResult").addEventListener("click",async()=>{
-  if(lastValue===null)return alert("Calculate first.");
-  try{await navigator.clipboard.writeText(String(lastValue));alert("Copied.");}
-  catch(_){alert("Clipboard is unavailable in this browser.");}
-});
-
-$("calculateEMI").addEventListener("click",()=>{
-  const P=+$("principal").value,r=+$("rate").value/1200,y=+$("years").value;
-  if(!(P>0)||!Number.isFinite(r)||r<0||!(y>0))return alert("Enter valid loan details.");
-  const n=Math.ceil(y*12);
-  if(n>1200)return alert("Duration is too long.");
-  const payment=r===0?P/n:P*r/(1-Math.pow(1+r,-n));
-  $("emiResult").classList.remove("hidden");
-  $("emiResult").innerHTML=`Monthly payment: <strong>${fmt(payment)}</strong><br>Total payment: ${fmt(payment*n)}<br>Total interest: ${fmt(payment*n-P)}`;
-  addHistory("EMI for "+P+" at "+($("rate").value)+"% for "+y+" years",payment,"Finance");
-});
-$("calculateSavings").addEventListener("click",()=>{
-  const P=+$("savingsPrincipal").value,r=+$("savingsRate").value/100,y=+$("savingsYears").value;
-  if(P<0||r<0||y<0||![P,r,y].every(Number.isFinite))return alert("Enter valid values.");
-  const simple=P*(1+r*y),compound=P*Math.pow(1+r/12,12*y);
-  $("savingsResult").classList.remove("hidden");
-  $("savingsResult").innerHTML=`Simple interest total: <strong>${fmt(simple)}</strong><br>Simple interest earned: ${fmt(simple-P)}<br>Monthly compound total: ${fmt(compound)}<br>Compound interest earned: ${fmt(compound-P)}`;
-  addHistory("Compound interest on "+P+" at "+(r*100)+"% for "+y+" years",compound,"Finance");
-});
-
-$("debtForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const amount=+$("amount").value;
-  if(!($("person").value.trim())||!(amount>0)||!$("due").value)return alert("Complete all required fields.");
-  data.debts.unshift({id:id(),person:$("person").value.trim(),type:$("debtType").value,
-    amount,due:$("due").value,note:$("note").value.trim(),status:"open"});
-  persist();e.target.reset();renderAll();
-});
-function renderDebts() {
-  const q=$("debtSearch").value.toLowerCase();
-  const rows=data.debts.filter(d=>(d.person+" "+d.note+" "+d.type).toLowerCase().includes(q));
-  $("debtTable").innerHTML=rows.length?`<table><thead><tr><th>Name</th><th>Type</th><th>Amount</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
-  ${rows.map(d=>`<tr><td>${esc(d.person)}<div class="muted">${esc(d.note)}</div></td><td>${d.type==="receivable"?"They owe me":"I owe them"}</td><td>${fmt(d.amount)}</td><td>${esc(d.due)}</td><td>${esc(d.status)}</td><td><button class="btn secondary" data-paid="${esc(d.id)}">${d.status==="open"?"Mark paid":"Reopen"}</button><button class="btn secondary" data-debt-delete="${esc(d.id)}">Delete</button></td></tr>`).join("")}</tbody></table>`:"<p class='muted'>No records.</p>";
-}
-$("debtTable").addEventListener("click",e=>{
-  const p=e.target.closest("[data-paid]"),d=e.target.closest("[data-debt-delete]");
-  if(p){const item=data.debts.find(x=>x.id===p.dataset.paid);if(item)item.status=item.status==="open"?"paid":"open";persist();renderAll();}
-  if(d&&confirm("Delete this record?")){data.debts=data.debts.filter(x=>x.id!==d.dataset.debtDelete);persist();renderAll();}
-});
-
-function renderHistory() {
-  const q=$("historySearch").value.toLowerCase();
-  const rows=data.history.filter(x=>(x.expression+" "+x.result+" "+x.category).toLowerCase().includes(q));
-  $("historyTable").innerHTML=rows.length?`<table><thead><tr><th>Date</th><th>Expression</th><th>Result</th><th></th></tr></thead><tbody>
-  ${rows.map(x=>`<tr><td>${esc(new Date(x.time).toLocaleString())}</td><td>${esc(x.expression)}</td><td>${esc(x.result)}</td><td><button class="btn secondary" data-reopen="${esc(x.id)}">Open</button><button class="btn secondary" data-history-delete="${esc(x.id)}">Delete</button></td></tr>`).join("")}</tbody></table>`:"<p class='muted'>No history.</p>";
-}
-$("historyTable").addEventListener("click",e=>{
-  const o=e.target.closest("[data-reopen]"),d=e.target.closest("[data-history-delete]");
-  if(o){const x=data.history.find(y=>y.id===o.dataset.reopen);if(x){$("expression").value=x.expression;$("result").textContent=x.result;lastExpression=x.expression;lastValue=Number(x.result);go("calculator");}}
-  if(d&&confirm("Delete this history entry?")){data.history=data.history.filter(x=>x.id!==d.dataset.historyDelete);persist();renderAll();}
-});
-$("clearHistory").addEventListener("click",()=>{
-  if(confirm("Delete all history?")){data.history=[];persist();renderAll();}
-});
-$("exportHistory").addEventListener("click",()=>{
-  const rows=[["Date","Expression","Result","Category"],...data.history.map(x=>[x.time,x.expression,x.result,x.category])];
-  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  download("calculator-history.csv",csv,"text/csv;charset=utf-8");
-});
-
-$("reminderForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  data.reminders.unshift({id:id(),title:$("reminderTitle").value.trim(),date:$("reminderDate").value});
-  persist();e.target.reset();renderAll();
-});
-$("notificationPermission").addEventListener("click",async()=>{
-  if(!("Notification" in window))return alert("Notifications are not supported.");
-  try{alert("Permission: "+await Notification.requestPermission());}
-  catch(_){alert("Could not request permission.");}
-});
-function renderReminders() {
-  $("reminderList").innerHTML=data.reminders.length?data.reminders.map(r=>
-    `<div class="card"><strong>${esc(r.title)}</strong><p class="muted">${esc(new Date(r.date).toLocaleString())}</p><button class="btn secondary" data-reminder-delete="${esc(r.id)}">Delete</button></div>`
-  ).join(""):"<p class='muted'>No reminders saved.</p>";
-}
-$("reminderList").addEventListener("click",e=>{
-  const b=e.target.closest("[data-reminder-delete]");
-  if(b&&confirm("Delete reminder?")){data.reminders=data.reminders.filter(x=>x.id!==b.dataset.reminderDelete);persist();renderAll();}
-});
-
-$("saveSettings").addEventListener("click",()=>{
-  settings.theme=$("theme").value;settings.language=$("language").value;
-  persistSettings();applyTheme();applyLanguage();alert("Settings saved.");
-});
-function applyLanguage() {
-  const lang=settings.language||"en";
-  document.documentElement.lang=lang;
-  document.documentElement.dir=["ar","ur"].includes(lang)?"rtl":"ltr";
-  const words={
-    en:{home:"⌂ Home",calculator:"🧮 Calculator",finance:"🏦 Finance & EMI",debts:"📒 Debt records",history:"◷ History",reminders:"🔔 Reminders",settings:"⚙ Settings"},
-    bn:{home:"⌂ হোম",calculator:"🧮 ক্যালকুলেটর",finance:"🏦 ফাইন্যান্স ও EMI",debts:"📒 ঋণের হিসাব",history:"◷ ইতিহাস",reminders:"🔔 রিমাইন্ডার",settings:"⚙ সেটিংস"},
-    ar:{home:"⌂ الرئيسية",calculator:"🧮 الحاسبة",finance:"🏦 الأدوات المالية",debts:"📒 سجلات الديون",history:"◷ السجل",reminders:"🔔 التذكيرات",settings:"⚙ الإعدادات"},
-    ur:{home:"⌂ ہوم",calculator:"🧮 کیلکولیٹر",finance:"🏦 مالیاتی ٹولز",debts:"📒 قرض کے ریکارڈ",history:"◷ تاریخ",reminders:"🔔 یاد دہانیاں",settings:"⚙ ترتیبات"},
-    hi:{home:"⌂ होम",calculator:"🧮 कैलकुलेटर",finance:"🏦 वित्त उपकरण",debts:"📒 ऋण रिकॉर्ड",history:"◷ इतिहास",reminders:"🔔 रिमाइंडर",settings:"⚙ सेटिंग्स"}
-  };
-  document.querySelectorAll("[data-page]").forEach(b=>{
-    const key=b.dataset.page;if(words[lang]?.[key])b.textContent=words[lang][key];
-  });
-}
-$("theme").value=settings.theme;$("language").value=settings.language;
-applyLanguage();
-
-$("backup").addEventListener("click",()=>download("smart-calculator-backup.json",
-  JSON.stringify({version:1,data,settings},null,2),"application/json"));
-$("importButton").addEventListener("click",()=>$("importFile").click());
-$("importFile").addEventListener("change",async e=>{
-  const file=e.target.files?.[0];if(!file)return;
-  try{
-    const obj=JSON.parse(await file.text());
-    if(!obj.data||!Array.isArray(obj.data.history)||!Array.isArray(obj.data.debts)||!Array.isArray(obj.data.reminders))throw Error("Invalid backup file.");
-    if(!confirm("Replace current records with this backup?"))return;
-    data=obj.data;if(obj.settings)settings=obj.settings;
-    persist();persistSettings();applyTheme();applyLanguage();renderAll();alert("Backup imported.");
-  }catch(err){alert("Import failed: "+err.message);}
-  finally{e.target.value="";}
-});
-
-function renderAll(){
-  $("countHistory").textContent=data.history.length;
-  $("countDebts").textContent=data.debts.filter(x=>x.status==="open").length;
-  $("countReminders").textContent=data.reminders.length;
-  renderDebts();renderHistory();renderReminders();
-}
-renderAll();
-
-/* =========================================================
-   FEATURE EXTENSION ZONE
-   Future features can be added using SSC.registerFeature().
-   A large feature can be kept in its own JS file.
-   ========================================================= */
-window.SSC={
-  version:"1.0.0",
-  registerFeature(feature){
-    if(!feature||!/^[a-z0-9-]+$/.test(feature.id||"")||
-       !feature.title||typeof feature.render!=="function")
-      throw Error("A feature needs a valid id, title and render function.");
-    if(builtInPages.includes(feature.id)||registry.has(feature.id))
-      throw Error("Feature ID already exists.");
-    registry.set(feature.id,feature);
-
-    const nav=document.createElement("button");
-    nav.dataset.page=feature.id;
-    nav.textContent=(feature.icon||"🧩")+" "+feature.title;
-    $("extensionNavigation").appendChild(nav);
-
-    const page=document.createElement("section");
-    page.className="page hidden";page.id="extension-page-"+feature.id;
-    const host=document.createElement("div");
-    host.id="extension-host-"+feature.id;
-    page.appendChild(host);$("extensionPages").appendChild(page);
-    feature.render(host);
-  },
-  saveCalculation(expression,result,category="Extension"){
-    if(!Number.isFinite(Number(result)))throw Error("Result must be numeric.");
-    addHistory(expression,result,category);
-  },
-  getSummary(){
-    return {history:data.history.length,debts:data.debts.length,reminders:data.reminders.length};
-  }
+const defaultState = {
+  theme: "auto",
+  language: "bn",
+  currency: "BDT",
+  history: [],
+  budget: [],
+  debts: [],
+  reminders: [],
+  reminderFired: []
 };
 
-// Example future module:
-// SSC.registerFeature({
-//   id:"unit-converter", title:"Unit Converter", icon:"📐",
-//   render(container) {
-//     container.innerHTML="<div class='card'><h3>Unit Converter</h3><p>New feature goes here.</p></div>";
-//   }
-// });
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) return structuredCloneSafe(defaultState);
+    return {
+      ...structuredCloneSafe(defaultState),
+      ...saved,
+      history: Array.isArray(saved.history) ? saved.history : [],
+      budget: Array.isArray(saved.budget) ? saved.budget : [],
+      debts: Array.isArray(saved.debts) ? saved.debts : [],
+      reminders: Array.isArray(saved.reminders) ? saved.reminders : [],
+      reminderFired: Array.isArray(saved.reminderFired) ? saved.reminderFired : []
+    };
+  } catch {
+    return structuredCloneSafe(defaultState);
+  }
+}
+
+function structuredCloneSafe(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+let state = loadState();
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch (error) {
+    alert("ডেটা সংরক্ষণ করা যায়নি। ব্রাউজারের স্টোরেজ পূর্ণ হতে পারে।");
+    return false;
+  }
+}
+
+function makeId() {
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+}
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[char]);
+}
+
+function numberFrom(id) {
+  const value = Number($(id).value);
+  if (!Number.isFinite(value)) throw new Error("সঠিক সংখ্যা লিখুন।");
+  return value;
+}
+
+function formatMoney(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "—";
+  try {
+    return new Intl.NumberFormat(state.language === "en" ? "en" : state.language, {
+      maximumFractionDigits: 2
+    }).format(amount) + " " + state.currency;
+  } catch {
+    return amount.toFixed(2) + " " + state.currency;
+  }
+}
+
+function todayISO() {
+  const now = new Date();
+  return now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+}
+
+function setDefaults() {
+  if (!$("budgetDate").value) $("budgetDate").value = todayISO();
+  if (!$("reminderDate").value) $("reminderDate").value = todayISO();
+  if (!$("debtDue").value) $("debtDue").value = todayISO();
+}
+
+function applyTheme() {
+  const theme = state.theme || "auto";
+  const dark = theme === "dark" ||
+    (theme === "auto" && window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("themeSelect").value = theme;
+  $("themeButton").textContent = dark ? "☀️ থিম" : "🌙 থিম";
+}
+
+const translations = {
+  bn: {tagline:"আপনার স্মার্ট হিসাবের সহকারী",home:"🏠 হোম",calculator:"🧮 ক্যালকুলেটর",finance:"💰 অর্থ ও EMI",budget:"📊 বাজেট",debts:"📒 দেনা-পাওনা",reminders:"⏰ রিমাইন্ডার",history:"🧾 ইতিহাস",settings:"⚙️ সেটিংস"},
+  en: {tagline:"Your smart finance companion",home:"🏠 Home",calculator:"🧮 Calculator",finance:"💰 Finance & EMI",budget:"📊 Budget",debts:"📒 Debts",reminders:"⏰ Reminders",history:"🧾 History",settings:"⚙️ Settings"},
+  ar: {tagline:"مساعدك الذكي للحسابات",home:"🏠 الرئيسية",calculator:"🧮 الحاسبة",finance:"💰 التمويل والقسط",budget:"📊 الميزانية",debts:"📒 الديون",reminders:"⏰ التذكيرات",history:"🧾 السجل",settings:"⚙️ الإعدادات"},
+  ur: {tagline:"آپ کا اسمارٹ حسابی معاون",home:"🏠 ہوم",calculator:"🧮 کیلکولیٹر",finance:"💰 مالیات اور قسط",budget:"📊 بجٹ",debts:"📒 قرض",reminders:"⏰ یاددہانیاں",history:"🧾 تاریخ",settings:"⚙️ ترتیبات"},
+  hi: {tagline:"आपका स्मार्ट हिसाब सहायक",home:"🏠 होम",calculator:"🧮 कैलकुलेटर",finance:"💰 वित्त और EMI",budget:"📊 बजट",debts:"📒 कर्ज",reminders:"⏰ रिमाइंडर",history:"🧾 इतिहास",settings:"⚙️ सेटिंग्स"}
+};
+
+function applyLanguage() {
+  const t = translations[state.language] || translations.bn;
+  $("tagline").textContent = t.tagline;
+  document.querySelectorAll(".nav [data-page]").forEach(button => {
+    const key = button.dataset.page;
+    if (t[key]) button.textContent = t[key];
+  });
+  document.documentElement.lang = state.language;
+  document.documentElement.dir = state.language === "ar" || state.language === "ur" ? "rtl" : "ltr";
+}
+
+function showPage(pageName) {
+  if (!$("page-" + pageName)) return;
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  $("page-" + pageName).classList.add("active");
+  document.querySelectorAll(".nav [data-page]").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === pageName);
+  });
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+document.querySelectorAll(".nav [data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+document.querySelectorAll("[data-goto]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.goto));
+});
+
+/* ---------- Safe mathematical parser ---------- */
+/* Supports arithmetic, parentheses, constants and selected functions.
+   Does not execute JavaScript and does not use eval() or Function(). */
+function calculateExpression(source) {
+  if (typeof source !== "string" || !source.trim()) throw new Error("একটি হিসাব লিখুন।");
+  if (source.length > 250) throw new Error("হিসাবটি অনেক বড়।");
+  const input = source.replace(/π/g, "pi").replace(/×/g, "*").replace(/÷/g, "/");
+  let pos = 0;
+
+  function skipSpaces() {
+    while (/\s/.test(input[pos] || "")) pos++;
+  }
+  function consume(char) {
+    skipSpaces();
+    if (input[pos] === char) { pos++; return true; }
+    return false;
+  }
+  function readNumber() {
+    skipSpaces();
+    const match = input.slice(pos).match(/^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/i);
+    if (!match) throw new Error("সংখ্যা সঠিক নয়।");
+    pos += match[0].length;
+    const value = Number(match[0]);
+    if (!Number.isFinite(value)) throw new Error("সংখ্যা সীমার বাইরে।");
+    return value;
+  }
+  function readName() {
+    skipSpaces();
+    const match = input.slice(pos).match(/^[a-zA-Z]+/);
+    if (!match) return null;
+    pos += match[0].length;
+    return match[0].toLowerCase();
+  }
+  function primary() {
+    skipSpaces();
+    if (consume("(")) {
+      const value = expression();
+      if (!consume(")")) throw new Error("বন্ধনী ) অনুপস্থিত।");
+      return value;
+    }
+    const next = input[pos];
+    if (next === "." || (next >= "0" && next <= "9")) return readNumber();
+
+    const name = readName();
+    if (!name) throw new Error("হিসাবের অংশ বুঝতে পারছি না।");
+
+    if (name === "pi") return Math.PI;
+    if (name === "e") return Math.E;
+
+    if (!consume("(")) throw new Error("ফাংশনের পরে ( ব্যবহার করুন।");
+    const arg = expression();
+    if (!consume(")")) throw new Error("ফাংশনের বন্ধনী ) অনুপস্থিত।");
+
+    const degrees = arg * Math.PI / 180;
+    const funcs = {
+      sin: () => Math.sin(degrees),
+      cos: () => Math.cos(degrees),
+      tan: () => {
+        if (Math.abs(Math.cos(degrees)) < 1e-12) throw new Error("এই কোণে tan অসংজ্ঞায়িত।");
+        return Math.tan(degrees);
+      },
+      sqrt: () => {
+        if (arg < 0) throw new Error("ঋণাত্মক সংখ্যার বর্গমূল বাস্তব সংখ্যায় নেই।");
+        return Math.sqrt(arg);
+      },
+      log: () => {
+        if (arg <= 0) throw new Error("log-এর জন্য সংখ্যা শূন্যের বেশি হতে হবে।");
+        return Math.log10(arg);
+      },
+      ln: () => {
+        if (arg <= 0) throw new Error("ln-এর জন্য সংখ্যা শূন্যের বেশি হতে হবে।");
+        return Math.log(arg);
+      },
+      abs: () => Math.abs(arg),
+      floor: () => Math.floor(arg),
+      ceil: () => Math.ceil(arg)
+    };
+    if (!funcs[name]) throw new Error("এই ফাংশনটি সমর্থিত নয়: " + name);
+    return funcs[name]();
+  }
+  function power() {
+    let left = primary();
+    if (consume("^")) {
+      const right = unary();
+      left = Math.pow(left, right);
+    }
+    return left;
+  }
+  function unary() {
+    if (consume("+")) return unary();
+    if (consume("-")) return -unary();
+    return power();
+  }
+  function term() {
+    let value = unary();
+    while (true) {
+      if (consume("*")) value *= unary();
+      else if (consume("/")) {
+        const divisor = unary();
+        if (divisor === 0) throw new Error("শূন্য দিয়ে ভাগ করা যায় না।");
+        value /= divisor;
+      } else if (consume("%")) {
+        const divisor = unary();
+        if (divisor === 0) throw new Error("শূন্য দিয়ে ভাগ করা যায় না।");
+        value %= divisor;
+      } else break;
+    }
+    return value;
+  }
+  function expression() {
+    let value = term();
+    while (true) {
+      if (consume("+")) value += term();
+      else if (consume("-")) value -= term();
+      else break;
+    }
+    return value;
+  }
+
+  const result = expression();
+  skipSpaces();
+  if (pos < input.length) throw new Error("অতিরিক্ত বা ভুল চিহ্ন রয়েছে।");
+  if (!Number.isFinite(result)) throw new Error("ফলাফল সীমার বাইরে বা অসংজ্ঞায়িত।");
+  return Object.is(result, -0) ? 0 : result;
+}
+
+function prettyNumber(number) {
+  return Number(number.toPrecision(12)).toString();
+}
+
+function runCalculation(saveToHistory) {
+  const expression = $("calcExpression").value.trim();
+  try {
+    const result = calculateExpression(expression);
+    $("calcResult").textContent = prettyNumber(result);
+    $("calcMessage").textContent = "";
+    if (saveToHistory) {
+      state.history.unshift({id:makeId(), expression, result:prettyNumber(result), time:new Date().toISOString()});
+      state.history = state.history.slice(0, 500);
+      saveState();
+      renderHistory();
+    }
+    return result;
+  } catch (error) {
+    $("calcMessage").textContent = error.message || "হিসাব করা যায়নি।";
+    return null;
+  }
+}
+
+$("keypad").addEventListener("click", async event => {
+  const button = event.target.closest("button");
+  if (!button) return;
+  const insert = button.dataset.insert;
+  const action = button.dataset.action;
+  const field = $("calcExpression");
+  const start = field.selectionStart ?? field.value.length;
+  const end = field.selectionEnd ?? field.value.length;
+
+  if (insert !== undefined) {
+    field.value = field.value.slice(0, start) + insert + field.value.slice(end);
+    field.focus();
+    const cursor = start + insert.length;
+    field.setSelectionRange(cursor, cursor);
+    $("calcResult").textContent = "…";
+  } else if (action === "clear") {
+    field.value = "";
+    $("calcResult").textContent = "0";
+    $("calcMessage").textContent = "";
+    field.focus();
+  } else if (action === "backspace") {
+    if (start === end && start > 0) {
+      field.value = field.value.slice(0, start - 1) + field.value.slice(end);
+      field.setSelectionRange(start - 1, start - 1);
+    } else {
+      field.value = field.value.slice(0, start) + field.value.slice(end);
+      field.setSelectionRange(start, start);
+    }
+    field.focus();
+  } else if (action === "equals") {
+    runCalculation(true);
+  } else if (action === "copy-result") {
+    const value = $("calcResult").textContent;
+    if (value && value !== "…" && value !== "0") {
+      try { await navigator.clipboard.writeText(value); $("calcMessage").textContent = "ফলাফল কপি হয়েছে।"; }
+      catch { $("calcMessage").textContent = "কপি করা যায়নি। ফলাফলটি নির্বাচন করে কপি করুন।"; }
+    }
+  } else if (action === "save-result") {
+    runCalculation(true);
+    $("calcMessage").textContent = "হিসাবের ইতিহাসে সংরক্ষণ করা হয়েছে (সঠিক ফলাফল হলে)।";
+  }
+});
+
+$("calcExpression").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    runCalculation(true);
+  }
+});
+
+/* ---------- Finance calculators ---------- */
+$("emiButton").addEventListener("click", () => {
+  try {
+    const principal = numberFrom("emiPrincipal");
+    const annualRate = numberFrom("emiRate");
+    const years = numberFrom("emiYears");
+    if (principal <= 0 || annualRate < 0 || years <= 0) throw new Error("ঋণের পরিমাণ ও মেয়াদ শূন্যের বেশি দিন; সুদ ঋণাত্মক হতে পারবে না।");
+    if (years > 100) throw new Error("মেয়াদ ১০০ বছরের মধ্যে দিন।");
+    const months = Math.round(years * 12);
+    const monthlyRate = annualRate / 1200;
+    const emi = monthlyRate === 0
+      ? principal / months
+      : principal * monthlyRate * Math.pow(1 + monthlyRate, months) /
+        (Math.pow(1 + monthlyRate, months) - 1);
+    const total = emi * months;
+    $("emiResult").innerHTML =
+      "মাসিক কিস্তি: <strong>" + escapeHTML(formatMoney(emi)) + "</strong><br>" +
+      "মোট পরিশোধ: <strong>" + escapeHTML(formatMoney(total)) + "</strong><br>" +
+      "মোট সুদ: <strong>" + escapeHTML(formatMoney(total - principal)) + "</strong><br>" +
+      "<span class='muted'>মাসের সংখ্যা: " + months + " (আনুমানিক; ব্যাংকের ফি/নিয়ম অন্তর্ভুক্ত নয়)</span>";
+  } catch (error) {
+    $("emiResult").textContent = error.message;
+  }
+});
+
+$("interestButton").addEventListener("click", () => {
+  try {
+    const p = numberFrom("interestPrincipal");
+    const r = numberFrom("interestRate") / 100;
+    const t = numberFrom("interestYears");
+    const n = numberFrom("compoundFrequency");
+    if (p < 0 || r < 0 || t < 0 || n <= 0) throw new Error("ঋণাত্মক মান ব্যবহার করবেন না।");
+    if (t > 1000) throw new Error("সময়সীমা খুব বেশি।");
+    const simpleInterest = p * r * t;
+    const compoundTotal = r === 0 ? p : p * Math.pow(1 + r / n, n * t);
+    $("interestResult").innerHTML =
+      "সরল সুদ: <strong>" + escapeHTML(formatMoney(simpleInterest)) + "</strong><br>" +
+      "সরল সুদসহ মোট: <strong>" + escapeHTML(formatMoney(p + simpleInterest)) + "</strong><br>" +
+      "চক্রবৃদ্ধি সুদ: <strong>" + escapeHTML(formatMoney(compoundTotal - p)) + "</strong><br>" +
+      "চক্রবৃদ্ধিসহ মোট: <strong>" + escapeHTML(formatMoney(compoundTotal)) + "</strong>";
+  } catch (error) {
+    $("interestResult").textContent = error.message;
+  }
+});
+
+$("percentButton").addEventListener("click", () => {
+  try {
+    const value = numberFrom("percentValue");
+    const rate = numberFrom("percentRate");
+    $("percentResult").textContent = rate + "% of " + value + " = " + prettyNumber(value * rate / 100);
+  } catch (error) {
+    $("percentResult").textContent = error.message;
+  }
+});
+
+/* ---------- Budget records ---------- */
+$("budgetForm").addEventListener("submit", event => {
+  event.preventDefault();
+  try {
+    const amount = numberFrom("budgetAmount");
+    if (amount <= 0) throw new Error("পরিমাণ শূন্যের বেশি দিন।");
+    const category = $("budgetCategory").value.trim();
+    if (!category) throw new Error("বিভাগ লিখুন।");
+    state.budget.unshift({
+      id:makeId(), type:$("budgetType").value, amount,
+      category, date:$("budgetDate").value || todayISO(),
+      note:$("budgetNote").value.trim(), createdAt:new Date().toISOString()
+    });
+    saveState();
+    $("budgetForm").reset();
+    $("budgetDate").value = todayISO();
+    renderBudget();
+  } catch (error) { alert(error.message); }
+});
+
+function deleteById(collection, id, label) {
+  if (!confirm(label + " মুছে ফেলবেন?")) return;
+  state[collection] = state[collection].filter(item => item.id !== id);
+  saveState();
+  renderAll();
+}
+
+function renderBudget() {
+  const income = state.budget.filter(x => x.type === "income").reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const expense = state.budget.filter(x => x.type === "expense").reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  $("budgetIncome").textContent = formatMoney(income);
+  $("budgetExpense").textContent = formatMoney(expense);
+  $("budgetNet").textContent = formatMoney(income - expense);
+  $("homeIncome").textContent = formatMoney(income);
+  $("homeExpense").textContent = formatMoney(expense);
+  $("homeBalance").textContent = formatMoney(income - expense);
+
+  $("budgetRows").innerHTML = state.budget.length ? state.budget.map(item => `
+    <tr>
+      <td>${escapeHTML(item.date)}</td>
+      <td><span class="badge">${item.type === "income" ? "আয়" : "ব্যয়"}</span></td>
+      <td>${escapeHTML(item.category)}</td>
+      <td>${escapeHTML(formatMoney(item.amount))}</td>
+      <td>${escapeHTML(item.note || "—")}</td>
+      <td><button class="danger small" data-delete-budget="${escapeHTML(item.id)}">মুছুন</button></td>
+    </tr>`).join("") : `<tr><td colspan="6" class="empty">এখনও কোনো রেকর্ড নেই।</td></tr>`;
+}
+
+$("budgetRows").addEventListener("click", event => {
+  const button = event.target.closest("[data-delete-budget]");
+  if (button) deleteById("budget", button.dataset.deleteBudget, "এই রেকর্ড");
+});
+
+/* ---------- Debt records ---------- */
+$("debtForm").addEventListener("submit", event => {
+  event.preventDefault();
+  try {
+    const amount = numberFrom("debtAmount");
+    const person = $("debtPerson").value.trim();
+    if (amount <= 0 || !person) throw new Error("নাম ও সঠিক পরিমাণ দিন।");
+    state.debts.unshift({
+      id:makeId(), person, type:$("debtType").value, amount,
+      due:$("debtDue").value, note:$("debtNote").value.trim(),
+      createdAt:new Date().toISOString()
+    });
+    saveState();
+    $("debtForm").reset();
+    $("debtDue").value = todayISO();
+    renderDebts();
+  } catch (error) { alert(error.message); }
+});
+
+function renderDebts() {
+  const owed = state.debts.filter(x => x.type === "owed").reduce((sum,x) => sum + Number(x.amount || 0),0);
+  const receivable = state.debts.filter(x => x.type === "receivable").reduce((sum,x) => sum + Number(x.amount || 0),0);
+  $("totalOwed").textContent = formatMoney(owed);
+  $("totalReceivable").textContent = formatMoney(receivable);
+  $("homeDebtCount").textContent = String(state.debts.length);
+
+  $("debtRows").innerHTML = state.debts.length ? state.debts.map(item => `
+    <tr>
+      <td>${escapeHTML(item.person)}</td>
+      <td>${item.type === "owed" ? "আমি দেব" : "আমি পাব"}</td>
+      <td>${escapeHTML(formatMoney(item.amount))}</td>
+      <td>${escapeHTML(item.due || "—")}</td>
+      <td>${escapeHTML(item.note || "—")}</td>
+      <td><button class="danger small" data-delete-debt="${escapeHTML(item.id)}">মুছুন</button></td>
+    </tr>`).join("") : `<tr><td colspan="6" class="empty">এখনও কোনো দেনা-পাওনা নেই।</td></tr>`;
+}
+
+$("debtRows").addEventListener("click", event => {
+  const button = event.target.closest("[data-delete-debt]");
+  if (button) deleteById("debts", button.dataset.deleteDebt, "এই দেনা-পাওনার রেকর্ড");
+});
+
+/* ---------- Reminders ---------- */
+$("reminderForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const title = $("reminderTitle").value.trim();
+  const date = $("reminderDate").value;
+  const time = $("reminderTime").value;
+  if (!title || !date || !time) return alert("শিরোনাম, তারিখ ও সময় পূরণ করুন।");
+  const when = new Date(date + "T" + time);
+  if (!Number.isFinite(when.getTime())) return alert("সঠিক তারিখ ও সময় দিন।");
+  state.reminders.push({
+    id:makeId(), title, date, time,
+    note:$("reminderNote").value.trim(), createdAt:new Date().toISOString()
+  });
+  saveState();
+  $("reminderForm").reset();
+  $("reminderDate").value = todayISO();
+  renderReminders();
+});
+
+function reminderTimestamp(item) {
+  return new Date(item.date + "T" + item.time).getTime();
+}
+
+function renderReminders() {
+  const sorted = [...state.reminders].sort((a,b) => reminderTimestamp(a) - reminderTimestamp(b));
+  $("reminderRows").innerHTML = sorted.length ? sorted.map(item => {
+    const past = reminderTimestamp(item) < Date.now();
+    return `<tr>
+      <td>${escapeHTML(item.date)} ${escapeHTML(item.time)}</td>
+      <td>${escapeHTML(item.title)}</td>
+      <td>${escapeHTML(item.note || "—")}</td>
+      <td><span class="badge">${past ? "সময় পেরিয়েছে" : "অপেক্ষমাণ"}</span></td>
+      <td><button class="danger small" data-delete-reminder="${escapeHTML(item.id)}">মুছুন</button></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="5" class="empty">কোনো রিমাইন্ডার নেই।</td></tr>`;
+
+  const upcoming = sorted.filter(item => reminderTimestamp(item) >= Date.now()).slice(0,5);
+  $("homeReminders").innerHTML = upcoming.length ? upcoming.map(item =>
+    `<p><strong>${escapeHTML(item.title)}</strong><br><span class="muted">${escapeHTML(item.date)} · ${escapeHTML(item.time)}</span></p>`
+  ).join("") : "কোনো আসন্ন রিমাইন্ডার নেই।";
+}
+
+$("reminderRows").addEventListener("click", event => {
+  const button = event.target.closest("[data-delete-reminder]");
+  if (button) deleteById("reminders", button.dataset.deleteReminder, "এই রিমাইন্ডার");
+});
+
+function checkReminders() {
+  const now = Date.now();
+  let changed = false;
+  for (const item of state.reminders) {
+    const time = reminderTimestamp(item);
+    const alreadyFired = state.reminderFired.includes(item.id);
+    if (!alreadyFired && time <= now && time > now - 60000) {
+      state.reminderFired.push(item.id);
+      changed = true;
+      if ("Notification" in window && Notification.permission === "granted") {
+        try { new Notification(item.title, {body:item.note || "আপনার রিমাইন্ডারের সময় হয়েছে।"}); } catch {}
+      } else {
+        $("notificationStatus").textContent = "রিমাইন্ডারের সময় হয়েছে: " + item.title;
+      }
+    }
+  }
+  if (changed) saveState();
+}
+
+$("notificationButton").addEventListener("click", async () => {
+  if (!("Notification" in window)) {
+    $("notificationStatus").textContent = "এই ব্রাউজারে নোটিফিকেশন সমর্থিত নয়।";
+    return;
+  }
+  try {
+    const permission = await Notification.requestPermission();
+    $("notificationStatus").textContent = permission === "granted"
+      ? "নোটিফিকেশন অনুমতি দেওয়া হয়েছে। অ্যাপ খোলা থাকলে রিমাইন্ডার কাজ করবে।"
+      : "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।";
+  } catch {
+    $("notificationStatus").textContent = "অনুমতি নেওয়া যায়নি।";
+  }
+});
+
+/* ---------- Calculation history ---------- */
+function renderHistory() {
+  $("historyRows").innerHTML = state.history.length ? state.history.map(item => `
+    <tr>
+      <td>${escapeHTML(new Date(item.time).toLocaleString())}</td>
+      <td>${escapeHTML(item.expression)}</td>
+      <td>${escapeHTML(item.result)}</td>
+      <td>
+        <button class="secondary small" data-reuse-history="${escapeHTML(item.id)}">আবার ব্যবহার</button>
+        <button class="danger small" data-delete-history="${escapeHTML(item.id)}">মুছুন</button>
+      </td>
+    </tr>`).join("") : `<tr><td colspan="4" class="empty">এখনও কোনো হিসাব সংরক্ষিত হয়নি।</td></tr>`;
+}
+
+$("historyRows").addEventListener("click", event => {
+  const reuse = event.target.closest("[data-reuse-history]");
+  const remove = event.target.closest("[data-delete-history]");
+  if (reuse) {
+    const item = state.history.find(x => x.id === reuse.dataset.reuseHistory);
+    if (item) {
+      $("calcExpression").value = item.expression;
+      $("calcResult").textContent = item.result;
+      showPage("calculator");
+    }
+  }
+  if (remove) {
+    state.history = state.history.filter(x => x.id !== remove.dataset.deleteHistory);
+    saveState();
+    renderHistory();
+  }
+});
+
+$("clearHistory").addEventListener("click", () => {
+  if (!confirm("সম্পূর্ণ ক্যালকুলেটর ইতিহাস মুছে ফেলবেন?")) return;
+  state.history = [];
+  saveState();
+  renderHistory();
+});
+
+/* ---------- Settings ---------- */
+$("saveSettings").addEventListener("click", () => {
+  state.language = $("languageSelect").value;
+  state.currency = $("currencySelect").value;
+  state.theme = $("themeSelect").value;
+  saveState();
+  applyTheme();
+  applyLanguage();
+  renderAll();
+  alert("সেটিংস সংরক্ষণ করা হয়েছে।");
+});
+
+$("themeButton").addEventListener("click", () => {
+  state.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  saveState();
+  applyTheme();
+});
+
+if (window.matchMedia) {
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
+    if (state.theme === "auto") applyTheme();
+  });
+}
+
+/* ---------- Export / import ---------- */
+function downloadBlob(content, mime, filename) {
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+$("backupButton").addEventListener("click", () => {
+  const backup = {app:"Smart Super Calculator", version:1, exportedAt:new Date().toISOString(), data:state};
+  downloadBlob(JSON.stringify(backup, null, 2), "application/json;charset=utf-8", "smart-calculator-backup-" + todayISO() + ".json");
+});
+
+function csvEscape(value) {
+  return '"' + String(value ?? "").replace(/"/g, '""') + '"';
+}
+function downloadCsv(rows, filename) {
+  const csv = "\uFEFF" + rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+  downloadBlob(csv, "text/csv;charset=utf-8", filename);
+}
+
+$("csvBudgetButton").addEventListener("click", () => {
+  downloadCsv([
+    ["Date","Type","Category","Amount","Note"],
+    ...state.budget.map(item => [item.date,item.type,item.category,item.amount,item.note])
+  ], "budget-" + todayISO() + ".csv");
+});
+
+$("exportHistoryCsv").addEventListener("click", () => {
+  downloadCsv([
+    ["Time","Expression","Result"],
+    ...state.history.map(item => [item.time,item.expression,item.result])
+  ], "calculator-history-" + todayISO() + ".csv");
+});
+
+$("restoreButton").addEventListener("click", async () => {
+  const file = $("restoreFile").files?.[0];
+  if (!file) return alert("প্রথমে JSON ব্যাকআপ ফাইল নির্বাচন করুন।");
+  if (file.size > 5 * 1024 * 1024) return alert("ফাইলটি অনেক বড় (সর্বোচ্চ ৫ MB)।");
+  if (!confirm("ব্যাকআপ পুনরুদ্ধার করলে বর্তমান রেকর্ড প্রতিস্থাপিত হবে। এগোবেন?")) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    const data = parsed && parsed.data ? parsed.data : parsed;
+    if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("ফাইলের ফরম্যাট সঠিক নয়।");
+    for (const key of ["history","budget","debts","reminders","reminderFired"]) {
+      if (data[key] !== undefined && !Array.isArray(data[key])) throw new Error("ব্যাকআপে " + key + " তালিকা সঠিক নয়।");
+    }
+    state = {
+      ...structuredCloneSafe(defaultState),
+      ...data,
+      history:Array.isArray(data.history) ? data.history : [],
+      budget:Array.isArray(data.budget) ? data.budget : [],
+      debts:Array.isArray(data.debts) ? data.debts : [],
+      reminders:Array.isArray(data.reminders) ? data.reminders : [],
+      reminderFired:Array.isArray(data.reminderFired) ? data.reminderFired : []
+    };
+    if (!["light","dark","auto"].includes(state.theme)) state.theme = "auto";
+    if (!translations[state.language]) state.language = "bn";
+    saveState();
+    applyTheme();
+    applyLanguage();
+    renderAll();
+    alert("ব্যাকআপ পুনরুদ্ধার হয়েছে।");
+  } catch (error) {
+    alert("ব্যাকআপ পুনরুদ্ধার করা যায়নি: " + error.message);
+  }
+});
+
+$("deleteAllData").addEventListener("click", () => {
+  if (!confirm("সতর্কতা: এই ব্রাউজারে থাকা সব হিসাব, রিমাইন্ডার, দেনা-পাওনা ও ইতিহাস মুছে যাবে। ব্যাকআপ আছে তো?")) return;
+  if (!confirm("নিশ্চিতভাবে সব ডেটা মুছবেন?")) return;
+  state = structuredCloneSafe(defaultState);
+  saveState();
+  applyTheme();
+  applyLanguage();
+  renderAll();
+  alert("এই অ্যাপের স্থানীয় ডেটা মুছে ফেলা হয়েছে।");
+});
+
+/* ---------- Live clock and dashboard ---------- */
+function updateClock() {
+  const now = new Date();
+  $("todayDate").textContent = now.toLocaleDateString(state.language, {
+    year:"numeric", month:"short", day:"numeric"
+  });
+  $("liveClock").textContent = now.toLocaleTimeString(state.language, {
+    hour:"2-digit", minute:"2-digit", second:"2-digit"
+  });
+}
+
+/* Optional PWA install prompt. A manifest and service worker are separate files. */
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  $("installButton").hidden = false;
+});
+$("installButton").addEventListener("click", async () => {
+  if (!deferredInstallPrompt) {
+    alert("ইনস্টল অপশন উপলভ্য নয়। PWA manifest ও service worker কনফিগারেশন যাচাই করুন।");
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  $("installButton").hidden = true;
+});
+
+/* ---------- Feature extension hook ---------- */
+/* Other scripts can register additional UI features through this hook. */
+window.SSC = window.SSC || {};
+window.SSC.registerFeature = function(feature) {
+  if (!feature || typeof feature.init !== "function") {
+    throw new TypeError("Feature must provide an init() function.");
+  }
+  feature.init({
+    state,
+    saveState,
+    showPage,
+    escapeHTML,
+    formatMoney
+  });
+};
+
+/* ---------- Rendering and initialization ---------- */
+function renderAll() {
+  renderBudget();
+  renderDebts();
+  renderReminders();
+  renderHistory();
+  updateClock();
+}
+
+$("languageSelect").value = translations[state.language] ? state.language : "bn";
+$("currencySelect").value = state.currency || "BDT";
+$("themeSelect").value = state.theme || "auto";
+
+applyTheme();
+applyLanguage();
+setDefaults();
+renderAll();
+checkReminders();
+
+setInterval(() => {
+  updateClock();
+  checkReminders();
+}, 15000);
+
+/* Handle browser tab returning to foreground. */
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    updateClock();
+    checkReminders();
+    renderReminders();
+  }
+});
 </script>
 </body>
 </html>
